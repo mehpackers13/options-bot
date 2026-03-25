@@ -1,0 +1,52 @@
+name: Morning Self-Improvement
+
+# Runs at 8am ET on weekdays.
+# 8am EDT (summer, UTC-4) = 12:00 UTC
+# 8am EST (winter, UTC-5) = 13:00 UTC
+# We schedule both so it always fires at the right time regardless of season.
+
+on:
+  schedule:
+    - cron: "0 12 * * 1-5"   # 8am EDT (Apr–Oct)
+    - cron: "0 13 * * 1-5"   # 8am EST (Nov–Mar)
+  workflow_dispatch:           # Manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  self-improve:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run self-improvement analysis
+        env:
+          DISCORD_WEBHOOK_URL:        ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_HEALTH_WEBHOOK_URL: ${{ secrets.DISCORD_HEALTH_WEBHOOK_URL }}
+        run: python run_self_improve.py
+
+      - name: Regenerate dashboard data
+        run: python generate_data.py
+
+      - name: Commit updated thresholds and dashboard data
+        run: |
+          git config user.name  "options-bot[actions]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/thresholds.json threshold_changes.log docs/data.json 2>/dev/null || true
+          git diff --staged --quiet \
+            || git commit -m "🧠 self-improve $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push

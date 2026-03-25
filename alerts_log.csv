@@ -1,0 +1,1 @@
+timestamp,ticker,signal_type,signal_label,signal_value,threshold_used,price_at_alert,put_call_ratio,avg_iv,total_volume,top_contract,confidence_score,outcome

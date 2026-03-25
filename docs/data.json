@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-03-25T00:00:00Z",
+  "last_scan": "Never",
+  "stats": {
+    "total_alerts": 0,
+    "overall_hit_rate": null,
+    "rated_count": 0,
+    "by_signal_type": {}
+  },
+  "alerts": [],
+  "threshold_changes": []
+}

@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sensitive (never commit these)
+.env
+*.secret
+
+# NOTE: alerts_log.csv, bot.log, data/*.json, and docs/data.json
+# are intentionally tracked so GitHub Actions can persist state
+# and the dashboard can read them.

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Options Alert Bot — Command Center</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d1117;
+      --surface: #161b22;
+      --border:  #30363d;
+      --text:    #e6edf3;
+      --muted:   #8b949e;
+      --green:   #3fb950;
+      --red:     #f85149;
+      --orange:  #d29922;
+      --blue:    #58a6ff;
+      --purple:  #bc8cff;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 { font-size: 17px; font-weight: 600; }
+    header h1 span { color: var(--blue); }
+
+    .status-badge {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted);
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    .dot.offline  { background: var(--red);   animation: none; }
+    .dot.waiting  { background: var(--orange); animation: none; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+    /* ── Stat cards ─────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+    .stat-card .label {
+      font-size: 11px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px;
+    }
+    .stat-card .value {
+      font-size: 30px; font-weight: 700; font-family: monospace;
+    }
+    .stat-card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    .green  { color: var(--green) !important; }
+    .red    { color: var(--red)   !important; }
+    .blue   { color: var(--blue)  !important; }
+    .orange { color: var(--orange)!important; }
+    .muted  { color: var(--muted) !important; }
+
+    /* ── Sections ───────────────────────────────────────── */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px; font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase; letter-spacing: .07em;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .section-header .sub { font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+    /* ── Signal bars ────────────────────────────────────── */
+    .signal-bars { padding: 16px 20px; }
+    .signal-row  { margin-bottom: 14px; }
+    .signal-row:last-child { margin-bottom: 0; }
+    .signal-meta {
+      display: flex; justify-content: space-between;
+      margin-bottom: 5px; font-size: 13px;
+    }
+    .signal-meta .name { font-weight: 500; }
+    .signal-meta .rate { font-size: 12px; color: var(--muted); }
+    .bar-track {
+      background: var(--border); border-radius: 4px; height: 6px; overflow: hidden;
+    }
+    .bar-fill { height: 100%; border-radius: 4px; transition: width .8s ease; }
+    .bar-fill.good { background: var(--green); }
+    .bar-fill.warn { background: var(--orange); }
+    .bar-fill.bad  { background: var(--red); }
+    .bar-fill.none { background: var(--muted); width: 4px !important; }
+
+    /* ── Table ──────────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      padding: 9px 16px;
+      text-align: left; font-size: 11px;
+      color: var(--muted); text-transform: uppercase; letter-spacing: .05em;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 9px 16px;
+      border-bottom: 1px solid var(--border);
+      font-family: monospace; font-size: 13px;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.025); }
+
+    /* ── Badges ─────────────────────────────────────────── */
+    .badge {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 10px; font-size: 11px; font-weight: 600;
+    }
+    .badge.volume  { background: rgba(210,153,34,.15); color: var(--orange); }
+    .badge.iv      { background: rgba(188,140,255,.15); color: var(--purple); }
+    .badge.bearish { background: rgba(248,81,73,.15);   color: var(--red); }
+    .badge.bullish { background: rgba(63,185,80,.15);   color: var(--green); }
+    .badge.unknown { background: rgba(139,148,158,.15); color: var(--muted); }
+
+    /* ── Outcome ────────────────────────────────────────── */
+    .hit    { color: var(--green); font-weight: 600; }
+    .miss   { color: var(--red);   font-weight: 600; }
+    .unrated{ color: var(--muted); }
+
+    /* ── Changes log ────────────────────────────────────── */
+    .changes-list {
+      padding: 12px 16px;
+      font-family: monospace; font-size: 12px; color: var(--muted);
+    }
+    .changes-list div {
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .changes-list div:last-child { border-bottom: none; }
+
+    /* ── Empty state ────────────────────────────────────── */
+    .empty {
+      padding: 36px; text-align: center;
+      color: var(--muted); font-size: 13px;
+    }
+
+    /* ── Footer ─────────────────────────────────────────── */
+    footer {
+      text-align: center; padding: 24px;
+      font-size: 12px; color: var(--muted);
+    }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .hide-sm { display: none; }
+      main { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ Options Alert Bot <span>Command Center</span></h1>
+  <div class="status-badge">
+    <div class="dot waiting" id="status-dot"></div>
+    <span id="status-text">Loading…</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Stat cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">Total Alerts</div>
+      <div class="value blue" id="stat-total">—</div>
+      <div class="sub">all time</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Hit Rate</div>
+      <div class="value muted" id="stat-hit-rate">—</div>
+      <div class="sub" id="stat-hit-sub">rate alerts to unlock</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Last Scan</div>
+      <div class="value blue" id="stat-last-scan" style="font-size:15px;padding-top:7px">—</div>
+      <div class="sub">Eastern Time</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Alerts Rated</div>
+      <div class="value orange" id="stat-rated">—</div>
+      <div class="sub" id="stat-rated-sub">fill "outcome" in CSV</div>
+    </div>
+  </div>
+
+  <!-- Signal breakdown -->
+  <div class="section">
+    <div class="section-header">
+      Signal Breakdown
+      <span class="sub muted" id="generated-at"></span>
+    </div>
+    <div class="signal-bars" id="signal-bars">
+      <div class="empty">No alerts yet — the bot will populate this after market open.</div>
+    </div>
+  </div>
+
+  <!-- Alert history -->
+  <div class="section">
+    <div class="section-header">
+      Alert History
+      <span class="sub muted">most recent 50 · rate outcomes in alerts_log.csv</span>
+    </div>
+    <div id="alert-table-wrap">
+      <div class="empty">No alerts yet. Signals fire during market hours (9:30am – 4pm ET).</div>
+    </div>
+  </div>
+
+  <!-- Self-improvement log -->
+  <div class="section">
+    <div class="section-header">Self-Improvement Log</div>
+    <div class="changes-list" id="changes-log">
+      <div class="empty">No threshold changes yet — needs 20+ rated alerts to activate.</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Options Alert Bot · auto-refreshes every 5 min ·
+  <a href="https://github.com" style="color:var(--blue)">View on GitHub</a>
+</footer>
+
+<script>
+// ── Constants ────────────────────────────────────────────────────────────────
+const SIGNAL_NAMES = {
+  volume_spike:   "Volume Spike",
+  iv_jump:        "IV Jump",
+  put_call_high:  "Bearish Put/Call",
+  put_call_low:   "Bullish Put/Call",
+};
+
+function signalLabel(type) {
+  for (const [k, v] of Object.entries(SIGNAL_NAMES))
+    if (type && type.includes(k)) return v;
+  return type || "Unknown";
+}
+
+function badgeClass(type) {
+  if (!type) return "unknown";
+  if (type.includes("volume")) return "volume";
+  if (type.includes("iv"))     return "iv";
+  if (type.includes("high"))   return "bearish";
+  if (type.includes("low"))    return "bullish";
+  return "unknown";
+}
+
+function barClass(rate) {
+  if (rate === null || rate === undefined) return "none";
+  if (rate >= 55) return "good";
+  if (rate >= 40) return "warn";
+  return "bad";
+}
+
+// ── Data loading ─────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const r = await fetch("./data.json?t=" + Date.now());
+    if (!r.ok) throw new Error("not found");
+    return await r.json();
+  } catch {
+    return null;
+  }
+}
+
+// ── Renderers ────────────────────────────────────────────────────────────────
+function renderHeader(data) {
+  const dot  = document.getElementById("status-dot");
+  const text = document.getElementById("status-text");
+  const last = data.last_scan || "";
+  if (last && last !== "Never" && last !== "—") {
+    dot.className = "dot";
+    text.textContent = "Bot running";
+  } else {
+    dot.className = "dot offline";
+    text.textContent = "Awaiting first scan";
+  }
+
+  if (data.generated_at) {
+    const d = new Date(data.generated_at);
+    document.getElementById("generated-at").textContent =
+      "Updated " + d.toUTCString().replace(" GMT", " UTC");
+  }
+}
+
+function renderStats(data) {
+  const s = data.stats || {};
+
+  document.getElementById("stat-total").textContent = s.total_alerts ?? 0;
+  document.getElementById("stat-last-scan").textContent = data.last_scan || "—";
+
+  const rated = s.rated_count ?? 0;
+  const total = s.total_alerts ?? 0;
+  document.getElementById("stat-rated").textContent = rated + " / " + total;
+
+  const needed = Math.max(0, 20 - rated);
+  document.getElementById("stat-rated-sub").textContent =
+    needed > 0 ? `need ${needed} more ratings` : "self-improvement active";
+
+  const hrEl = document.getElementById("stat-hit-rate");
+  const hrSub = document.getElementById("stat-hit-sub");
+  if (s.overall_hit_rate !== null && s.overall_hit_rate !== undefined) {
+    hrEl.textContent = s.overall_hit_rate + "%";
+    hrEl.className   = "value " + barClass(s.overall_hit_rate).replace("good","green").replace("warn","orange").replace("bad","red");
+    hrSub.textContent = `across ${rated} rated alerts`;
+  } else {
+    hrEl.textContent  = "N/A";
+    hrEl.className    = "value muted";
+    hrSub.textContent = "rate 20+ alerts to see this";
+  }
+}
+
+function renderSignalBars(data) {
+  const el    = document.getElementById("signal-bars");
+  const types = (data.stats || {}).by_signal_type || {};
+  if (!Object.keys(types).length) return;
+
+  el.innerHTML = Object.entries(types).map(([type, d]) => {
+    const name = signalLabel(type);
+    const rate = d.hit_rate;
+    const info = rate !== null
+      ? `${rate}% hit rate (${d.hits}/${d.rated} rated · ${d.total} total)`
+      : `${d.total} alert${d.total !== 1 ? "s" : ""} · not yet rated`;
+    const pct = rate ?? 0;
+    const cls = barClass(rate);
+    return `
+      <div class="signal-row">
+        <div class="signal-meta">
+          <span class="name">${name}</span>
+          <span class="rate">${info}</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill ${cls}" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function renderAlertTable(data) {
+  const wrap   = document.getElementById("alert-table-wrap");
+  const alerts = data.alerts || [];
+  if (!alerts.length) return;
+
+  const rows = alerts.map(a => {
+    const oc  = a.outcome;
+    const ocClass = oc === "1" ? "hit" : oc === "0" ? "miss" : "unrated";
+    const ocText  = oc === "1" ? "✓ Hit" : oc === "0" ? "✗ Miss" : "— unrated";
+    const bc   = badgeClass(a.signal_type || "");
+    const sl   = a.signal_label || signalLabel(a.signal_type || "");
+    const conf = a.confidence_score ? Math.round(Number(a.confidence_score)) : "—";
+    const ts   = (a.timestamp || "").replace("T", " ").substring(0, 16);
+    const price = a.price_at_alert ? "$" + parseFloat(a.price_at_alert).toFixed(2) : "—";
+    return `<tr>
+      <td>${ts}</td>
+      <td style="font-weight:600">${a.ticker || "—"}</td>
+      <td><span class="badge ${bc}">${sl}</span></td>
+      <td class="hide-sm">${price}</td>
+      <td class="hide-sm">${conf}/100</td>
+      <td class="${ocClass}">${ocText}</td>
+    </tr>`;
+  }).join("");
+
+  wrap.innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Time (ET)</th>
+        <th>Ticker</th>
+        <th>Signal</th>
+        <th class="hide-sm">Price</th>
+        <th class="hide-sm">Confidence</th>
+        <th>Outcome</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderChangesLog(data) {
+  const el      = document.getElementById("changes-log");
+  const changes = data.threshold_changes || [];
+  if (!changes.length) return;
+  el.innerHTML = changes.map(l => `<div>${l}</div>`).join("");
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  const data = await loadData();
+  if (!data) {
+    document.getElementById("status-dot").className  = "dot offline";
+    document.getElementById("status-text").textContent = "No data — push to GitHub first";
+    return;
+  }
+  renderHeader(data);
+  renderStats(data);
+  renderSignalBars(data);
+  renderAlertTable(data);
+  renderChangesLog(data);
+}
+
+init();
+setInterval(init, 5 * 60 * 1000);   // refresh every 5 min
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+[2026-03-25 00:54:54 ET] [INFO] ============================================================
+[2026-03-25 00:54:54 ET] [INFO] Options Alert Bot starting
+[2026-03-25 00:54:54 ET] [INFO] Tickers  : SPY, QQQ, AAPL, TSLA, NVDA
+[2026-03-25 00:54:54 ET] [INFO] Interval : 15 min during market hours (9:30am–4pm ET)
+[2026-03-25 00:54:54 ET] [INFO] ============================================================
+[2026-03-25 00:54:54 ET] [INFO] Created alerts log at /Users/mikehartshorn/Claude/options-bot/alerts_log.csv
+[2026-03-25 00:54:54 ET] [INFO] Market closed (Wednesday 00:54 ET). Next check in 15 min.
+[2026-03-25 01:00:23 ET] [INFO] ============================================================
+[2026-03-25 01:00:23 ET] [INFO] Options Alert Bot starting
+[2026-03-25 01:00:23 ET] [INFO] Tickers  : SPY, QQQ, AAPL, TSLA, NVDA
+[2026-03-25 01:00:23 ET] [INFO] Interval : 15 min during market hours (9:30am–4pm ET)
+[2026-03-25 01:00:23 ET] [INFO] ============================================================
+[2026-03-25 01:00:23 ET] [INFO] Market closed (Wednesday 01:00 ET). Next check in 15 min.
+[2026-03-25 01:09:54 ET] [INFO] Market closed (Wednesday 01:09 ET). Next check in 15 min.
+[2026-03-25 01:24:54 ET] [INFO] Market closed (Wednesday 01:24 ET). Next check in 15 min.

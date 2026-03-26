@@ -1,11 +1,24 @@
 """
 DATA SOURCES
 ============
-Tries Robinhood first for real-time data.
-Falls back to yfinance automatically if Robinhood is unavailable or fails.
-Credentials come from environment variables (GitHub Secrets):
-  ROBINHOOD_USERNAME  — your Robinhood email
-  ROBINHOOD_PASSWORD  — your Robinhood password
+Priority order:
+  1. Tradier API  — real-time options data, simple Bearer token, no MFA
+  2. yfinance     — 15-min delayed fallback, always works, no auth needed
+
+Robinhood (robin_stocks) has been removed: Robinhood eliminated authenticator-app
+2FA in December 2024 and now requires mobile-app device approval on every new
+login location. GitHub Actions is a new location on every run — no programmatic
+workaround exists.
+
+HOW TO ENABLE TRADIER (takes ~5 minutes, completely free):
+  1. Sign up at tradier.com → open a free brokerage account (no deposit needed)
+  2. Go to tradier.com/profile#api → copy your API Access Token
+  3. In GitHub → repo Settings → Secrets → add:
+       TRADIER_API_TOKEN = <your token>
+  That's it. Real-time options data, no MFA, token never expires.
+
+Without TRADIER_API_TOKEN set, the bot uses yfinance (15-min delayed) — still
+fully functional for detecting unusual volume, IV spikes, and P/C skews.
 """
 
 import os
@@ -13,102 +26,86 @@ import time
 from typing import Optional
 
 import pandas as pd
+import requests
 import yfinance as yf
 
-_use_robinhood: bool = False
-_rh_login_attempted: bool = False
+# ── State ───────────────────────────────────────────────────────────────────────
+
+_tradier_token: str = ""
+_tradier_base:  str = "https://api.tradier.com/v1"
+_source_label:  str = "yfinance"   # updated in init()
+
+_TRADIER_HEADERS = lambda token: {   # noqa: E731
+    "Authorization": f"Bearer {token}",
+    "Accept":        "application/json",
+}
 
 
-def _try_robinhood_login() -> bool:
-    global _use_robinhood, _rh_login_attempted
-    if _rh_login_attempted:
-        return _use_robinhood
-    _rh_login_attempted = True
-
-    username = os.environ.get("ROBINHOOD_USERNAME", "")
-    password = os.environ.get("ROBINHOOD_PASSWORD", "")
-    if not username or not password:
-        print("[data_sources] No Robinhood credentials — using yfinance")
-        _use_robinhood = False
-        return False
-
-    # Read optional TOTP secret for accounts with 2FA enabled.
-    # Generate one at: robinhood.com → Security → Two-Factor Authentication → Authenticator App
-    # Then add ROBINHOOD_TOTP_SECRET as a GitHub Secret.
-    totp_secret = os.environ.get("ROBINHOOD_TOTP_SECRET", "")
-
-    # Robinhood login runs in a thread with a 20-second timeout.
-    # Without this it hangs indefinitely waiting for an interactive MFA prompt.
-    import threading
-
-    login_result = {"success": False, "error": None}
-
-    def _do_login():
-        try:
-            import robin_stocks.robinhood as rh
-
-            login_kwargs = {
-                "username":      username,
-                "password":      password,
-                "expiresIn":     86400,
-                "store_session": True,
-            }
-
-            if totp_secret:
-                try:
-                    import pyotp
-                    login_kwargs["mfa_code"] = pyotp.TOTP(totp_secret).now()
-                    print("[data_sources] Using TOTP code for Robinhood 2FA")
-                except Exception as te:
-                    print(f"[data_sources] TOTP generation failed ({te})")
-
-            rh.login(**login_kwargs)
-            login_result["success"] = True
-        except Exception as exc:
-            login_result["error"] = str(exc)
-
-    t = threading.Thread(target=_do_login, daemon=True)
-    t.start()
-    t.join(timeout=20)   # give Robinhood 20 seconds max before falling back
-
-    if t.is_alive():
-        # Thread still blocked — Robinhood is waiting for interactive MFA
-        print(
-            "[data_sources] Robinhood login timed out (likely waiting for MFA) — "
-            "using yfinance. To fix: add ROBINHOOD_TOTP_SECRET as a GitHub Secret."
-        )
-        _use_robinhood = False
-        return False
-
-    if login_result["success"]:
-        _use_robinhood = True
-        print("[data_sources] Robinhood login OK — using real-time data ✅")
-        return True
-
-    print(f"[data_sources] Robinhood unavailable ({login_result['error']}) — using yfinance")
-    _use_robinhood = False
-    return False
-
+# ── Initialisation ──────────────────────────────────────────────────────────────
 
 def init() -> None:
-    """Call once at startup to attempt Robinhood login."""
-    _try_robinhood_login()
+    """
+    Call once at startup. Checks for TRADIER_API_TOKEN and validates it.
+    Falls back silently to yfinance if token is absent or invalid.
+    """
+    global _tradier_token, _source_label
+
+    token = os.environ.get("TRADIER_API_TOKEN", "").strip()
+    if not token:
+        print("[data_sources] No TRADIER_API_TOKEN — using yfinance (15-min delayed)")
+        _source_label = "yfinance"
+        return
+
+    # Quick validation: hit the /user/profile endpoint
+    try:
+        resp = requests.get(
+            f"{_tradier_base}/user/profile",
+            headers=_TRADIER_HEADERS(token),
+            timeout=8,
+        )
+        if resp.status_code == 200:
+            profile = resp.json().get("profile", {})
+            name    = profile.get("name", "unknown")
+            _tradier_token = token
+            _source_label  = "tradier"
+            print(f"[data_sources] Tradier connected — account: {name} ✅  (real-time data)")
+        else:
+            print(
+                f"[data_sources] Tradier token invalid (HTTP {resp.status_code}) "
+                f"— using yfinance"
+            )
+            _source_label = "yfinance"
+    except Exception as exc:
+        print(f"[data_sources] Tradier connection failed ({exc}) — using yfinance")
+        _source_label = "yfinance"
 
 
-# ── Price ───────────────────────────────────────────────────────────────────────
+def get_source() -> str:
+    return _source_label
+
+
+# ── Current price ───────────────────────────────────────────────────────────────
 
 def get_current_price(ticker: str) -> Optional[float]:
-    if _use_robinhood:
+    if _tradier_token:
         try:
-            import robin_stocks.robinhood as rh
-            prices = rh.stocks.get_latest_price(ticker)
-            if prices and prices[0]:
-                return float(prices[0])
+            resp = requests.get(
+                f"{_tradier_base}/markets/quotes",
+                headers=_TRADIER_HEADERS(_tradier_token),
+                params={"symbols": ticker, "greeks": "false"},
+                timeout=8,
+            )
+            if resp.status_code == 200:
+                q = resp.json().get("quotes", {}).get("quote", {})
+                last = q.get("last") or q.get("close") or q.get("prevclose")
+                if last and float(last) > 0:
+                    return float(last)
         except Exception:
             pass
+
     # yfinance fallback
     try:
-        t = yf.Ticker(ticker)
+        t     = yf.Ticker(ticker)
         price = t.fast_info.last_price
         if price and price > 0:
             return float(price)
@@ -124,68 +121,112 @@ def get_current_price(ticker: str) -> Optional[float]:
 
 def get_options_chain(ticker: str, num_expirations: int = 3) -> Optional[dict]:
     """
-    Returns a dict:
+    Returns:
       {
         "expirations": [{"expiry": str, "calls": DataFrame, "puts": DataFrame}, ...],
-        "source": "robinhood" | "yfinance"
+        "source": "tradier" | "yfinance"
       }
+    Returns None on complete failure.
     """
-    if _use_robinhood:
-        try:
-            return _rh_options_chain(ticker, num_expirations)
-        except Exception as exc:
-            print(f"[data_sources] RH options chain failed ({exc}) — falling back to yfinance")
+    if _tradier_token:
+        result = _tradier_options_chain(ticker, num_expirations)
+        if result:
+            return result
+        print(f"[data_sources] Tradier chain failed for {ticker} — falling back to yfinance")
 
     return _yf_options_chain(ticker, num_expirations)
 
 
-def _rh_options_chain(ticker: str, num_expirations: int) -> Optional[dict]:
-    import robin_stocks.robinhood as rh
+# ── Tradier implementation ──────────────────────────────────────────────────────
 
-    chain_info = rh.options.get_chains(ticker)
-    if not chain_info:
-        return None
-    exp_dates = chain_info.get("expiration_dates", [])
-    if not exp_dates:
+def _tradier_get_expirations(ticker: str) -> list:
+    """Return list of expiration date strings from Tradier."""
+    try:
+        resp = requests.get(
+            f"{_tradier_base}/markets/options/expirations",
+            headers=_TRADIER_HEADERS(_tradier_token),
+            params={"symbol": ticker, "includeAllRoots": "true", "strikes": "false"},
+            timeout=8,
+        )
+        if resp.status_code != 200:
+            return []
+        dates = resp.json().get("expirations", {}).get("date", [])
+        if isinstance(dates, str):
+            dates = [dates]
+        return dates or []
+    except Exception:
+        return []
+
+
+def _tradier_options_chain(ticker: str, num_expirations: int) -> Optional[dict]:
+    """Fetch options chain from Tradier for the nearest N expirations."""
+    expirations_dates = _tradier_get_expirations(ticker)
+    if not expirations_dates:
         return None
 
     expirations = []
-    for exp in exp_dates[:num_expirations]:
-        calls_raw = rh.options.find_options_by_expiration(ticker, exp, optionType="call")
-        puts_raw  = rh.options.find_options_by_expiration(ticker, exp, optionType="put")
-        expirations.append({
-            "expiry": exp,
-            "calls":  _rh_to_df(calls_raw),
-            "puts":   _rh_to_df(puts_raw),
-        })
-        time.sleep(0.3)
-
-    return {"expirations": expirations, "source": "robinhood"}
-
-
-def _rh_to_df(raw: list) -> pd.DataFrame:
-    records = []
-    for opt in (raw or []):
+    for exp in expirations_dates[:num_expirations]:
         try:
-            records.append({
-                "contractSymbol":   opt.get("chain_symbol", ""),
-                "strike":           float(opt.get("strike_price", 0) or 0),
-                "volume":           int(opt.get("volume", 0) or 0),
-                "openInterest":     int(opt.get("open_interest", 0) or 0),
-                "impliedVolatility": float(opt.get("implied_volatility", 0) or 0),
-                "lastPrice":        float(opt.get("last_trade_price", 0) or 0),
+            resp = requests.get(
+                f"{_tradier_base}/markets/options/chains",
+                headers=_TRADIER_HEADERS(_tradier_token),
+                params={"symbol": ticker, "expiration": exp, "greeks": "true"},
+                timeout=10,
+            )
+            if resp.status_code != 200:
+                continue
+
+            raw_options = resp.json().get("options", {})
+            if not raw_options:
+                continue
+            opts = raw_options.get("option", [])
+            if isinstance(opts, dict):
+                opts = [opts]   # single-contract edge case
+
+            calls_rows, puts_rows = [], []
+            for opt in opts:
+                # Tradier IV is already a decimal fraction (0.25 = 25%)
+                greeks   = opt.get("greeks") or {}
+                iv_raw   = greeks.get("mid_iv") or greeks.get("bid_iv") or opt.get("iv", 0) or 0
+                row = {
+                    "contractSymbol":    opt.get("symbol", ""),
+                    "strike":            float(opt.get("strike", 0)),
+                    "volume":            int(opt.get("volume", 0) or 0),
+                    "openInterest":      int(opt.get("open_interest", 0) or 0),
+                    "impliedVolatility": float(iv_raw),
+                    "lastPrice":         float(opt.get("last", 0) or 0),
+                }
+                if opt.get("option_type") == "call":
+                    calls_rows.append(row)
+                else:
+                    puts_rows.append(row)
+
+            expirations.append({
+                "expiry": exp,
+                "calls":  pd.DataFrame(calls_rows) if calls_rows else _empty_df(),
+                "puts":   pd.DataFrame(puts_rows)  if puts_rows  else _empty_df(),
             })
-        except Exception:
+            time.sleep(0.2)   # polite rate limiting
+
+        except Exception as exc:
+            print(f"[data_sources] Tradier chain error {ticker} {exp}: {exc}")
             continue
-    return pd.DataFrame(records) if records else pd.DataFrame(
-        columns=["contractSymbol", "strike", "volume", "openInterest",
-                 "impliedVolatility", "lastPrice"]
+
+    return {"expirations": expirations, "source": "tradier"} if expirations else None
+
+
+def _empty_df() -> pd.DataFrame:
+    return pd.DataFrame(
+        columns=["contractSymbol", "strike", "volume",
+                 "openInterest", "impliedVolatility", "lastPrice"]
     )
 
 
+# ── yfinance implementation ─────────────────────────────────────────────────────
+
 def _yf_options_chain(ticker: str, num_expirations: int) -> Optional[dict]:
     try:
-        t    = yf.Ticker(ticker)
+        t     = yf.Ticker(ticker)
         dates = t.options
         if not dates:
             return None
@@ -205,12 +246,11 @@ def _yf_options_chain(ticker: str, num_expirations: int) -> Optional[dict]:
         return None
 
 
-# ── History ─────────────────────────────────────────────────────────────────────
+# ── Utility helpers ─────────────────────────────────────────────────────────────
 
 def get_price_history(ticker: str, days: int = 30) -> Optional[pd.DataFrame]:
     try:
-        t    = yf.Ticker(ticker)
-        hist = t.history(period=f"{days}d")
+        hist = yf.Ticker(ticker).history(period=f"{days}d")
         return hist if not hist.empty else None
     except Exception:
         return None

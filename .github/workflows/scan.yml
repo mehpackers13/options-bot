@@ -35,8 +35,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL:        ${{ secrets.DISCORD_WEBHOOK_URL }}
           DISCORD_HEALTH_WEBHOOK_URL: ${{ secrets.DISCORD_HEALTH_WEBHOOK_URL }}
-          ROBINHOOD_USERNAME:         ${{ secrets.ROBINHOOD_USERNAME }}
-          ROBINHOOD_PASSWORD:         ${{ secrets.ROBINHOOD_PASSWORD }}
+          TRADIER_API_TOKEN:          ${{ secrets.TRADIER_API_TOKEN }}
         run: python run_once.py
 
       - name: Regenerate dashboard data

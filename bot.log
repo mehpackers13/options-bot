@@ -36,3 +36,16 @@
 [2026-03-26 10:17:45 ET] [INFO] NVDA: only 0 day(s) of volume history — building baseline
 [2026-03-26 10:17:45 ET] [INFO]   NVDA: no raw signals  (PC=1.07, IV=32.6%, Vol=186,863)
 [2026-03-26 10:17:45 ET] [INFO] Scan complete — 0 alerts fired. 0 signal(s) filtered out. Silence = discipline.
+[2026-03-26 11:47:37 ET] [INFO] GitHub Actions: market open — running scan
+[2026-03-26 11:47:37 ET] [INFO] Scanning 5 ticker(s): SPY, QQQ, AAPL, TSLA, NVDA
+[2026-03-26 11:47:37 ET] [INFO]   Checking SPY ...
+[2026-03-26 11:47:39 ET] [INFO]   SPY [volume_spike] filtered — Gate 4 FAIL — confidence 56/100 is below the 70 threshold
+[2026-03-26 11:47:40 ET] [INFO]   Checking QQQ ...
+[2026-03-26 11:47:42 ET] [INFO]   QQQ [volume_spike] filtered — Gate 4 FAIL — confidence 56/100 is below the 70 threshold
+[2026-03-26 11:47:43 ET] [INFO]   Checking AAPL ...
+[2026-03-26 11:47:44 ET] [INFO]   AAPL [volume_spike] filtered — Gate 4 FAIL — confidence 62/100 is below the 70 threshold
+[2026-03-26 11:47:46 ET] [INFO]   Checking TSLA ...
+[2026-03-26 11:47:47 ET] [INFO]   TSLA: no raw signals  (PC=1.1, IV=38.6%, Vol=662,280)
+[2026-03-26 11:47:47 ET] [INFO]   Checking NVDA ...
+[2026-03-26 11:47:48 ET] [INFO]   NVDA [volume_spike] filtered — Gate 4 FAIL — confidence 56/100 is below the 70 threshold
+[2026-03-26 11:47:49 ET] [INFO] Scan complete — 0 alerts fired. 4 signal(s) filtered out. Silence = discipline.

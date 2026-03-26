@@ -1,20 +1,20 @@
-name: Morning Self-Improvement
+name: Weekly Report
 
-# Runs at 8am ET on weekdays.
-# 8am EDT (summer, UTC-4) = 12:00 UTC
-# 8am EST (winter, UTC-5) = 13:00 UTC
+# Runs Sunday at 8pm ET
+# 8pm EDT (summer, UTC-4) = 00:00 Monday UTC
+# 8pm EST (winter, UTC-5) = 01:00 Monday UTC
 
 on:
   schedule:
-    - cron: "0 12 * * 1-5"   # 8am EDT (Apr–Oct)
-    - cron: "0 13 * * 1-5"   # 8am EST (Nov–Mar)
-  workflow_dispatch:
+    - cron: "0 0 * * 1"    # 8pm EDT (Apr–Oct) — Monday 00:00 UTC
+    - cron: "0 1 * * 1"    # 8pm EST (Nov–Mar) — Monday 01:00 UTC
+  workflow_dispatch:         # Manual trigger from Actions tab
 
 permissions:
   contents: write
 
 jobs:
-  self-improve:
+  weekly-report:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,21 +32,20 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run morning analysis (stats + AI brain + Discord briefing)
+      - name: Run weekly report
         env:
-          DISCORD_WEBHOOK_URL:        ${{ secrets.DISCORD_WEBHOOK_URL }}
           DISCORD_HEALTH_WEBHOOK_URL: ${{ secrets.DISCORD_HEALTH_WEBHOOK_URL }}
           ANTHROPIC_API_KEY:          ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python run_morning.py
+        run: python run_weekly.py
 
       - name: Regenerate dashboard data
         run: python generate_data.py
 
-      - name: Commit updated files
+      - name: Commit updated data
         run: |
           git config user.name  "options-bot[actions]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/ threshold_changes.log ai_brain.log docs/data.json 2>/dev/null || true
+          git add data/ai_weekly.json docs/data.json 2>/dev/null || true
           git diff --staged --quiet \
-            || git commit -m "🧠 morning-analysis $(date -u '+%Y-%m-%d %H:%M UTC')"
+            || git commit -m "📅 weekly-report $(date -u '+%Y-%m-%d')"
           git push

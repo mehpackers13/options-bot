@@ -1,9 +1,8 @@
 name: Options Scan
 
 # Runs every 15 minutes during market hours — no Mac needed.
-# UTC range 13:00-21:00 covers 9:30am-4pm ET in both summer (EDT, UTC-4)
-# and winter (EST, UTC-5). The run_once.py script skips the run if the
-# market happens to be closed.
+# UTC 13:00-21:00 covers 9:30am-4pm ET in summer (EDT) and winter (EST).
+# run_once.py skips the run automatically if the market is closed.
 
 on:
   schedule:
@@ -11,7 +10,7 @@ on:
   workflow_dispatch:                  # Manual trigger from GitHub → Actions tab
 
 permissions:
-  contents: write   # allows the bot to commit updated data files back
+  contents: write
 
 jobs:
   scan:
@@ -36,6 +35,8 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL:        ${{ secrets.DISCORD_WEBHOOK_URL }}
           DISCORD_HEALTH_WEBHOOK_URL: ${{ secrets.DISCORD_HEALTH_WEBHOOK_URL }}
+          ROBINHOOD_USERNAME:         ${{ secrets.ROBINHOOD_USERNAME }}
+          ROBINHOOD_PASSWORD:         ${{ secrets.ROBINHOOD_PASSWORD }}
         run: python run_once.py
 
       - name: Regenerate dashboard data

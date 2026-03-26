@@ -1,10 +1,6 @@
 """
-run_self_improve.py — One-shot self-improvement for GitHub Actions.
-Reads alerts_log.csv, analyses hit rates, and adjusts thresholds if needed.
-Env vars DISCORD_WEBHOOK_URL / DISCORD_HEALTH_WEBHOOK_URL are picked up
-automatically via config.py.
+run_self_improve.py — kept for backwards compatibility.
+Now delegates to run_morning.py which does stats + AI analysis + briefing.
 """
-
-from self_improve import run_morning_analysis
-
-run_morning_analysis()
+from run_morning import main
+main()

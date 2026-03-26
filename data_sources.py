@@ -32,16 +32,34 @@ def _try_robinhood_login() -> bool:
         _use_robinhood = False
         return False
 
+    # Read optional TOTP secret for accounts with 2FA enabled.
+    # Generate one at: robinhood.com → Security → Two-Factor Authentication → Authenticator App
+    # Then add ROBINHOOD_TOTP_SECRET as a GitHub Secret.
+    totp_secret = os.environ.get("ROBINHOOD_TOTP_SECRET", "")
+
     try:
-        import robin_stocks.robinhood as rh  # noqa: F401
-        rh.login(
-            username, password,
-            expiresIn=86400,
-            store_session=True,
-            by_sms=False,        # avoid blocking on MFA prompt
-        )
+        import robin_stocks.robinhood as rh
+
+        login_kwargs = {
+            "username":      username,
+            "password":      password,
+            "expiresIn":     86400,
+            "store_session": True,
+        }
+
+        # robin_stocks 3.x: pass mfa_code if a TOTP secret is available
+        if totp_secret:
+            try:
+                import pyotp
+                mfa_code = pyotp.TOTP(totp_secret).now()
+                login_kwargs["mfa_code"] = mfa_code
+                print(f"[data_sources] Using TOTP code for Robinhood 2FA")
+            except Exception as totp_exc:
+                print(f"[data_sources] TOTP generation failed ({totp_exc}) — trying without MFA code")
+
+        rh.login(**login_kwargs)
         _use_robinhood = True
-        print("[data_sources] Robinhood login OK — using real-time data")
+        print("[data_sources] Robinhood login OK — using real-time data ✅")
         return True
     except Exception as exc:
         print(f"[data_sources] Robinhood unavailable ({exc}) — using yfinance")

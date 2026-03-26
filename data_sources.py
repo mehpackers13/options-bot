@@ -37,34 +37,57 @@ def _try_robinhood_login() -> bool:
     # Then add ROBINHOOD_TOTP_SECRET as a GitHub Secret.
     totp_secret = os.environ.get("ROBINHOOD_TOTP_SECRET", "")
 
-    try:
-        import robin_stocks.robinhood as rh
+    # Robinhood login runs in a thread with a 20-second timeout.
+    # Without this it hangs indefinitely waiting for an interactive MFA prompt.
+    import threading
 
-        login_kwargs = {
-            "username":      username,
-            "password":      password,
-            "expiresIn":     86400,
-            "store_session": True,
-        }
+    login_result = {"success": False, "error": None}
 
-        # robin_stocks 3.x: pass mfa_code if a TOTP secret is available
-        if totp_secret:
-            try:
-                import pyotp
-                mfa_code = pyotp.TOTP(totp_secret).now()
-                login_kwargs["mfa_code"] = mfa_code
-                print(f"[data_sources] Using TOTP code for Robinhood 2FA")
-            except Exception as totp_exc:
-                print(f"[data_sources] TOTP generation failed ({totp_exc}) — trying without MFA code")
+    def _do_login():
+        try:
+            import robin_stocks.robinhood as rh
 
-        rh.login(**login_kwargs)
+            login_kwargs = {
+                "username":      username,
+                "password":      password,
+                "expiresIn":     86400,
+                "store_session": True,
+            }
+
+            if totp_secret:
+                try:
+                    import pyotp
+                    login_kwargs["mfa_code"] = pyotp.TOTP(totp_secret).now()
+                    print("[data_sources] Using TOTP code for Robinhood 2FA")
+                except Exception as te:
+                    print(f"[data_sources] TOTP generation failed ({te})")
+
+            rh.login(**login_kwargs)
+            login_result["success"] = True
+        except Exception as exc:
+            login_result["error"] = str(exc)
+
+    t = threading.Thread(target=_do_login, daemon=True)
+    t.start()
+    t.join(timeout=20)   # give Robinhood 20 seconds max before falling back
+
+    if t.is_alive():
+        # Thread still blocked — Robinhood is waiting for interactive MFA
+        print(
+            "[data_sources] Robinhood login timed out (likely waiting for MFA) — "
+            "using yfinance. To fix: add ROBINHOOD_TOTP_SECRET as a GitHub Secret."
+        )
+        _use_robinhood = False
+        return False
+
+    if login_result["success"]:
         _use_robinhood = True
         print("[data_sources] Robinhood login OK — using real-time data ✅")
         return True
-    except Exception as exc:
-        print(f"[data_sources] Robinhood unavailable ({exc}) — using yfinance")
-        _use_robinhood = False
-        return False
+
+    print(f"[data_sources] Robinhood unavailable ({login_result['error']}) — using yfinance")
+    _use_robinhood = False
+    return False
 
 
 def init() -> None:

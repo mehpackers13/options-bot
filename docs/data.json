@@ -1,12 +1,15 @@
 {
-  "generated_at": "2026-03-25T23:58:30.604240Z",
-  "last_scan": "2026-03-25 19:58:30 ET",
+  "generated_at": "2026-03-26T01:39:39.603085Z",
+  "last_scan": "2026-03-25 21:39:39 ET",
   "stats": {
     "total_alerts": 0,
     "overall_hit_rate": null,
     "rated_count": 0,
-    "by_signal_type": {}
+    "by_signal_type": {},
+    "earnings_plays": 0
   },
   "alerts": [],
-  "threshold_changes": []
+  "threshold_changes": [],
+  "ai_daily": {},
+  "ai_weekly": {}
 }

@@ -361,3 +361,4 @@
 [2026-03-31 15:38:53 ET] [INFO] Scan complete — 0 alerts fired. 0 signal(s) filtered out. Silence = discipline.
 [2026-03-31 16:22:54 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)
 [2026-03-31 17:00:10 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)
+[2026-03-31 17:39:28 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)

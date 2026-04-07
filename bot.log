@@ -846,3 +846,4 @@
 [2026-04-07 15:41:31 ET] [INFO]   Checking NVDA ...
 [2026-04-07 15:41:32 ET] [INFO]   NVDA [iv_jump] filtered — Gate 1 FAIL — volume ratio 0.6x is below the 3x minimum
 [2026-04-07 15:41:34 ET] [INFO] Scan complete — 0 alerts fired. 4 signal(s) filtered out. Silence = discipline.
+[2026-04-07 16:22:34 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)

@@ -928,3 +928,4 @@
 [2026-04-08 15:59:03 ET] [INFO]   NVDA: no raw signals  (PC=0.6, IV=26.3%, Vol=1,363,989)
 [2026-04-08 15:59:03 ET] [INFO] Scan complete — 0 alerts fired. 0 signal(s) filtered out. Silence = discipline.
 [2026-04-08 16:39:42 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)
+[2026-04-08 17:27:45 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)

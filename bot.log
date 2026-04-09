@@ -930,3 +930,16 @@
 [2026-04-08 16:39:42 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)
 [2026-04-08 17:27:45 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)
 [2026-04-08 18:05:14 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)
+[2026-04-09 10:48:01 ET] [INFO] GitHub Actions: market open — running scan
+[2026-04-09 10:48:01 ET] [INFO] Scanning 5 ticker(s): SPY, QQQ, AAPL, TSLA, NVDA
+[2026-04-09 10:48:01 ET] [INFO]   Checking SPY ...
+[2026-04-09 10:48:02 ET] [INFO]   SPY: no raw signals  (PC=1.68, IV=17.7%, Vol=1,731,920)
+[2026-04-09 10:48:02 ET] [INFO]   Checking QQQ ...
+[2026-04-09 10:48:03 ET] [INFO]   QQQ [iv_jump] filtered — Gate 1 FAIL — volume ratio 0.2x is below the 3x minimum
+[2026-04-09 10:48:04 ET] [INFO]   Checking AAPL ...
+[2026-04-09 10:48:05 ET] [INFO]   AAPL: no raw signals  (PC=1.31, IV=30.4%, Vol=141,693)
+[2026-04-09 10:48:05 ET] [INFO]   Checking TSLA ...
+[2026-04-09 10:48:05 ET] [INFO]   TSLA: no raw signals  (PC=1.1, IV=44.3%, Vol=537,731)
+[2026-04-09 10:48:05 ET] [INFO]   Checking NVDA ...
+[2026-04-09 10:48:06 ET] [INFO]   NVDA: no raw signals  (PC=0.8, IV=26.9%, Vol=239,953)
+[2026-04-09 10:48:06 ET] [INFO] Scan complete — 0 alerts fired. 1 signal(s) filtered out. Silence = discipline.

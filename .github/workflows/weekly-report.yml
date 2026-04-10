@@ -48,4 +48,4 @@ jobs:
           git add data/ai_weekly.json docs/data.json 2>/dev/null || true
           git diff --staged --quiet \
             || git commit -m "📅 weekly-report $(date -u '+%Y-%m-%d')"
-          git push
+          git pull --rebase origin main && git push

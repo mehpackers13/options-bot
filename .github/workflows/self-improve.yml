@@ -49,4 +49,4 @@ jobs:
           git add data/ threshold_changes.log ai_brain.log docs/data.json 2>/dev/null || true
           git diff --staged --quiet \
             || git commit -m "🧠 morning-analysis $(date -u '+%Y-%m-%d %H:%M UTC')"
-          git push
+          git pull --rebase origin main && git push

@@ -1175,3 +1175,4 @@
 [2026-04-14 14:58:37 ET] [INFO]   Checking META ...
 [2026-04-14 14:58:38 ET] [INFO]   META [put_call_low] filtered — Gate 1 FAIL — volume ratio 1.1x is below the 3x minimum
 [2026-04-14 14:58:39 ET] [INFO] Scan complete — 0 alerts fired. 4 signal(s) filtered out. Silence = discipline.
+[2026-04-14 16:02:41 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)

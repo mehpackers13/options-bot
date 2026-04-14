@@ -29,7 +29,7 @@ DISCORD_HEALTH_WEBHOOK_URL = os.environ.get("DISCORD_HEALTH_WEBHOOK_URL", "")
 # ============================================================
 #  STEP 2: Tickers to watch (add/remove as you like)
 # ============================================================
-TICKERS = ["SPY", "QQQ", "AAPL", "TSLA", "NVDA"]
+TICKERS = ["SPY", "QQQ", "AAPL", "TSLA", "NVDA", "AMD", "META"]
 
 # ============================================================
 #  Scan frequency: how often to check during market hours
@@ -43,7 +43,7 @@ SCAN_INTERVAL_MINUTES = 15
 # ============================================================
 DEFAULT_THRESHOLDS = {
     # Alert if total options volume is this many times above the 20-day average
-    "volume_spike_multiplier": 3.0,
+    "volume_spike_multiplier": 2.0,
 
     # Alert if implied volatility jumps this many percent in a single session
     "iv_jump_percent": 20.0,
@@ -60,3 +60,9 @@ DEFAULT_THRESHOLDS = {
 #  (you must fill in "outcome" in alerts_log.csv manually)
 # ============================================================
 MIN_ALERTS_FOR_IMPROVEMENT = 20
+
+# ============================================================
+#  VIX monitoring — index of market fear / expected volatility
+# ============================================================
+VIX_SPIKE_THRESHOLD  = 25.0   # send alert if VIX closes above this
+VIX_DAILY_ALERT_HOUR = 16     # 4pm ET — daily VIX summary time

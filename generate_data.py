@@ -10,7 +10,7 @@ You can also run it manually:  python generate_data.py
 import csv
 import json
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 BASE = Path(__file__).parent
@@ -109,6 +109,28 @@ def calculate_stats(alerts):
     }
 
 
+def read_unit_total(alerts):
+    """Options bot: 1 unit = 1 correct signal (paper tracking). Returns running unit total."""
+    rated = [a for a in alerts if a.get("outcome") in ("0", "1")]
+    units = sum(1.0 if a["outcome"] == "1" else -1.0 for a in rated)
+    return round(units, 1)
+
+
+def read_today_alerts(alerts):
+    """Return alerts from the last 24 hours."""
+    cutoff = datetime.utcnow() - timedelta(hours=24)
+    today = []
+    for a in alerts:
+        ts_str = a.get("timestamp", "")
+        try:
+            ts = datetime.strptime(ts_str[:19], "%Y-%m-%d %H:%M:%S")
+            if ts >= cutoff:
+                today.append(a)
+        except Exception:
+            pass
+    return list(reversed(today))
+
+
 def main():
     alerts    = read_alerts()
     last_scan = read_last_scan()
@@ -116,6 +138,8 @@ def main():
     stats     = calculate_stats(alerts)
     ai_daily  = read_ai_suggestions()
     ai_weekly = read_ai_weekly()
+    unit_total = read_unit_total(alerts)
+    today_alerts = read_today_alerts(alerts)
 
     recent = list(reversed(alerts[-50:]))
 
@@ -123,6 +147,8 @@ def main():
         "generated_at":      datetime.utcnow().isoformat() + "Z",
         "last_scan":         last_scan,
         "stats":             stats,
+        "unit_total":        unit_total,
+        "today_alerts":      today_alerts,
         "alerts":            recent,
         "threshold_changes": changes,
         "ai_daily":          ai_daily,

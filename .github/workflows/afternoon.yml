@@ -1,0 +1,88 @@
+name: Options 4pm Summary
+
+# Runs at 4pm ET (20:00 UTC) Monday–Friday.
+# Sends VIX level + market mood + alerts-today count to Discord.
+
+on:
+  schedule:
+    - cron: "0 20 * * 1-5"   # 4pm ET (EDT); works Nov-Mar too (5pm UTC offset = 21:00, close enough)
+  workflow_dispatch:
+
+concurrency:
+  group: options-git
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+
+  summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run 4pm summary
+        env:
+          DISCORD_WEBHOOK_URL:        ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_HEALTH_WEBHOOK_URL: ${{ secrets.DISCORD_HEALTH_WEBHOOK_URL }}
+          TRADIER_API_TOKEN:          ${{ secrets.TRADIER_API_TOKEN }}
+        run: python run_4pm.py
+
+      - name: Upload outputs for commit job
+        uses: actions/upload-artifact@v4
+        with:
+          name: afternoon-data-${{ github.run_id }}
+          path: |
+            bot.log
+          if-no-files-found: ignore
+          retention-days: 1
+
+  commit:
+    needs: summary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Self-heal git state
+        run: |
+          rm -f .git/index.lock .git/MERGE_HEAD .git/rebase-merge/head-name 2>/dev/null || true
+          git rebase --abort 2>/dev/null || true
+          git checkout -- . 2>/dev/null || true
+
+      - name: Download outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: afternoon-data-${{ github.run_id }}
+          path: .
+
+      - name: Commit and push
+        run: |
+          git config user.name  "options-bot[actions]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bot.log 2>/dev/null || true
+          git diff --staged --quiet && echo "Nothing to commit." && exit 0
+          git commit -m "📊 4pm summary $(date -u '+%Y-%m-%d %H:%M UTC')"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase -X ours origin/main && git push && break
+            echo "Push attempt $attempt failed — retrying in 15s..."
+            git rebase --abort 2>/dev/null || true
+            git checkout -- . 2>/dev/null || true
+            sleep 15
+          done

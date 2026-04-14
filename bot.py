@@ -489,6 +489,133 @@ def log_alert(data: dict, signal: dict, confidence: int, is_ep: bool) -> None:
         csv.DictWriter(f, fieldnames=_CSV_HEADERS).writerow(row)
 
 
+# ── VIX monitoring ──────────────────────────────────────────────────────────────
+
+_vix_spike_alerted_date: str = ""   # track so we only alert once per day
+
+
+def fetch_vix() -> Optional[float]:
+    """Fetch today's current VIX level via yfinance."""
+    try:
+        hist = yf.Ticker("^VIX").history(period="2d")
+        if hist.empty:
+            return None
+        return round(float(hist["Close"].iloc[-1]), 2)
+    except Exception:
+        return None
+
+
+def fetch_vix_yesterday() -> Optional[float]:
+    """Fetch the previous session's VIX close."""
+    try:
+        hist = yf.Ticker("^VIX").history(period="5d")
+        if len(hist) < 2:
+            return None
+        return round(float(hist["Close"].iloc[-2]), 2)
+    except Exception:
+        return None
+
+
+def _send_vix_spike_discord(vix_now: float, vix_prev: Optional[float]) -> None:
+    webhook = config.DISCORD_WEBHOOK_URL
+    if not webhook or webhook == "YOUR_DISCORD_WEBHOOK_URL_HERE":
+        log(f"VIX SPIKE: {vix_now:.1f} — no webhook configured")
+        return
+    change_str = ""
+    if vix_prev:
+        change_str = f" (was {vix_prev:.1f} yesterday, +{vix_now - vix_prev:.1f})"
+    payload = {
+        "embeds": [{
+            "title":       f"⚠️ VIX SPIKE — {vix_now:.1f}",
+            "description": (
+                f"VIX has risen above **{config.VIX_SPIKE_THRESHOLD:.0f}**{change_str}.\n\n"
+                "**High probability of options signals today** — watch closely.\n"
+                f"Scanning: {', '.join(config.TICKERS)}"
+            ),
+            "color":       0xFF6600,
+            "footer":      {"text": "Options Bot — VIX monitor"},
+            "timestamp":   datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }]
+    }
+    try:
+        requests.post(webhook, json=payload, timeout=10)
+        log(f"VIX spike alert sent: {vix_now:.1f}")
+    except Exception as exc:
+        log(f"VIX spike Discord failed: {exc}", "WARN")
+
+
+def check_vix_and_alert() -> Optional[float]:
+    """
+    Fetch VIX and send spike alert if above threshold.
+    Returns current VIX level (always), or None on fetch failure.
+    Only sends the spike Discord alert once per calendar day.
+    """
+    global _vix_spike_alerted_date
+    vix_now  = fetch_vix()
+    if vix_now is None:
+        log("VIX fetch failed — skipping VIX check", "WARN")
+        return None
+
+    log(f"VIX: {vix_now:.1f}")
+
+    today_str = datetime.datetime.now(ET).strftime("%Y-%m-%d")
+    if vix_now >= config.VIX_SPIKE_THRESHOLD and _vix_spike_alerted_date != today_str:
+        vix_prev = fetch_vix_yesterday()
+        _send_vix_spike_discord(vix_now, vix_prev)
+        _vix_spike_alerted_date = today_str
+
+    return vix_now
+
+
+def _send_4pm_summary(vix_now: Optional[float], alerts_today: int,
+                      nearest_miss: Optional[str]) -> None:
+    """Send the 4pm end-of-day Discord summary."""
+    webhook = config.DISCORD_WEBHOOK_URL
+    if not webhook or webhook == "YOUR_DISCORD_WEBHOOK_URL_HERE":
+        return
+
+    today = datetime.datetime.now(ET).strftime("%A, %B %-d")
+
+    if vix_now is None:
+        vix_str = "unavailable"
+        mood    = "Unknown"
+    elif vix_now < 15:
+        vix_str = f"{vix_now:.1f} (calm)"
+        mood    = "Calm — low signal probability"
+    elif vix_now < 20:
+        vix_str = f"{vix_now:.1f} (moderate)"
+        mood    = "Moderate — normal signal rate"
+    elif vix_now < config.VIX_SPIKE_THRESHOLD:
+        vix_str = f"{vix_now:.1f} (elevated)"
+        mood    = "Elevated — watch for signals tomorrow"
+    else:
+        vix_str = f"{vix_now:.1f} (SPIKE)"
+        mood    = "SPIKE — high signal probability"
+
+    fields = [
+        {"name": "VIX Level",       "value": vix_str, "inline": True},
+        {"name": "Options Mood",    "value": mood,    "inline": True},
+        {"name": "Alerts Today",    "value": str(alerts_today), "inline": True},
+    ]
+    if nearest_miss:
+        fields.append({"name": "Nearest Miss", "value": nearest_miss, "inline": False})
+
+    payload = {
+        "embeds": [{
+            "title":     f"📊 Daily Close — {today}",
+            "color":     0x5865F2 if alerts_today > 0 else 0x95A5A6,
+            "fields":    fields,
+            "footer":    {"text": "Options Bot — 4pm ET daily summary"},
+            "timestamp": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }]
+    }
+    try:
+        requests.post(webhook, json=payload, timeout=10)
+        log("4pm daily summary sent to Discord")
+    except Exception as exc:
+        log(f"4pm summary Discord failed: {exc}", "WARN")
+
+
 # ── Market hours ────────────────────────────────────────────────────────────────
 
 def is_market_hours() -> bool:
@@ -511,12 +638,16 @@ def is_pre_market_window() -> bool:
 
 # ── Main scan ───────────────────────────────────────────────────────────────────
 
-def run_scan() -> None:
+def run_scan(return_stats: bool = False):
     thresholds = load_thresholds()
     log(f"Scanning {len(config.TICKERS)} ticker(s): {', '.join(config.TICKERS)}")
 
+    # Check VIX at the start of every scan (alerts once per day if spiking)
+    vix_now = check_vix_and_alert()
+
     alerts_fired   = 0
     silent_reasons = []
+    nearest_miss_str: Optional[str] = None
 
     for ticker in config.TICKERS:
         log(f"  Checking {ticker} ...")
@@ -559,6 +690,10 @@ def run_scan() -> None:
             if not passes:
                 log(f"  {ticker} [{sig['type']}] filtered — {reason}")
                 silent_reasons.append(f"{ticker} {sig['type']}: {reason}")
+                # Track nearest miss (highest confidence filtered signal)
+                miss_line = f"{ticker} {sig['label']} — {reason} (conf {confidence}/100)"
+                if nearest_miss_str is None or confidence > int(nearest_miss_str.split("conf ")[1].split("/")[0]):
+                    nearest_miss_str = miss_line
                 continue
 
             # All gates passed — fetch context (news + Reddit) only now
@@ -589,6 +724,9 @@ def run_scan() -> None:
         len(config.TICKERS),
         silent_reasons,
     )
+
+    if return_stats:
+        return {"alerts_fired": alerts_fired, "vix": vix_now, "nearest_miss": nearest_miss_str}
 
 
 def main() -> None:

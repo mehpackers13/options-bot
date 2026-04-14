@@ -180,7 +180,7 @@ function setStatus(ts) {
   try {
     const gen = new Date(ts);
     const ageMin = (Date.now() - gen.getTime()) / 60000;
-    if (ageMin < 30) { dot.className='dot green'; txt.textContent='Market hours active'; }
+    if (ageMin < 120) { dot.className='dot green'; txt.textContent='Live — '+Math.round(ageMin)+'m ago'; }
     else if (ageMin < 480) { dot.className='dot yellow'; txt.textContent='Last scan '+Math.round(ageMin/60)+'h ago'; }
     else { dot.className='dot red'; txt.textContent='Stale — market closed'; }
   } catch { dot.className='dot red'; txt.textContent='Unknown'; }

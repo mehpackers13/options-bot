@@ -374,11 +374,12 @@ def send_discord_alert(
         )
         fields.append({"name": "🔥 Hottest Contract", "value": val, "inline": False})
 
-        # Exit strategy: target +20%, stop -10%, days to expiry
+        # Exit strategy: target +25%, stop -50%, days to expiry, recommended entry
         last_price = float(c.get("last") or 0)
         if last_price > 0:
-            target = round(last_price * 1.20, 2)
-            stop   = round(last_price * 0.90, 2)
+            target = round(last_price * 1.25, 2)
+            stop   = round(last_price * 0.50, 2)
+            entry  = last_price
             try:
                 exp_date  = datetime.datetime.strptime(c["expiry"], "%Y-%m-%d").date()
                 today_d   = datetime.datetime.now(ET).date()
@@ -386,9 +387,21 @@ def send_discord_alert(
                 sell_days = max(0, min(2, days_left - 1))
                 sell_by   = (today_d + datetime.timedelta(days=sell_days)).strftime("%b %-d")
                 time_str  = f"\n⏳ **{days_left}d** to expiry — sell by **{sell_by}**"
+                # Recommend a strike/expiry 2-3 weeks out if top contract expires very soon
+                if days_left < 10:
+                    rec_exp = exp_date + datetime.timedelta(days=14 - days_left % 7)
+                    rec_str = f"\n📅 **Rec. expiry**: {rec_exp.strftime('%b %-d')} (~2 wks out)"
+                else:
+                    rec_str = ""
             except Exception:
                 time_str  = ""
-            exit_val = f"🎯 **Target**: ${target} (+20%)\n🛑 **Stop Loss**: ${stop} (-10%){time_str}"
+                rec_str   = ""
+            exit_val = (
+                f"💵 **Entry**: ~${entry}\n"
+                f"🎯 **Target**: ${target} (+25%)\n"
+                f"🛑 **Stop Loss**: ${stop} (-50%)"
+                f"{time_str}{rec_str}"
+            )
             fields.append({"name": "📊 Exit Strategy", "value": exit_val, "inline": False})
 
     if context:

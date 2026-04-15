@@ -38,6 +38,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run scan (single pass)
+        continue-on-error: true
         env:
           DISCORD_WEBHOOK_URL:        ${{ secrets.DISCORD_WEBHOOK_URL }}
           DISCORD_HEALTH_WEBHOOK_URL: ${{ secrets.DISCORD_HEALTH_WEBHOOK_URL }}
@@ -45,6 +46,7 @@ jobs:
         run: python run_once.py
 
       - name: Regenerate dashboard data
+        if: always()
         run: python generate_data.py
 
       - name: Upload outputs for commit job

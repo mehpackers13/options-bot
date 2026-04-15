@@ -59,7 +59,7 @@ DEFAULT_THRESHOLDS = {
 #  Self-improvement: minimum rated alerts before auto-tuning
 #  (you must fill in "outcome" in alerts_log.csv manually)
 # ============================================================
-MIN_ALERTS_FOR_IMPROVEMENT = 20
+MIN_ALERTS_FOR_IMPROVEMENT = 10
 
 # ============================================================
 #  VIX monitoring — index of market fear / expected volatility

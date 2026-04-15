@@ -1,21 +1,21 @@
 {
-  "generated_at": "2026-04-15T03:25:52.664090Z",
+  "generated_at": "2026-04-15T03:54:06.904635Z",
   "last_scan": "2026-04-14 18:02:14 ET",
   "stats": {
     "total_alerts": 1,
-    "overall_hit_rate": 0.0,
-    "rated_count": 1,
+    "overall_hit_rate": null,
+    "rated_count": 0,
     "by_signal_type": {
       "put_call_low": {
         "total": 1,
-        "rated": 1,
+        "rated": 0,
         "hits": 0,
-        "hit_rate": 0.0
+        "hit_rate": null
       }
     },
     "earnings_plays": 0
   },
-  "unit_total": -1.0,
+  "unit_total": 0,
   "today_alerts": [
     {
       "timestamp": "2026-04-14 10:44:39",
@@ -30,11 +30,9 @@
       "total_volume": "149112",
       "top_contract": "CALL $650.0 2026-04-15 Vol:9,323",
       "confidence_score": "73",
-      "outcome": "0",
-      "null": [
-        "yfinance",
-        ""
-      ]
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
     }
   ],
   "alerts": [
@@ -51,11 +49,9 @@
       "total_volume": "149112",
       "top_contract": "CALL $650.0 2026-04-15 Vol:9,323",
       "confidence_score": "73",
-      "outcome": "0",
-      "null": [
-        "yfinance",
-        ""
-      ]
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
     }
   ],
   "threshold_changes": [],

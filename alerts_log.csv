@@ -1,2 +1,4 @@
 timestamp,ticker,signal_type,signal_label,signal_value,threshold_used,price_at_alert,put_call_ratio,avg_iv,total_volume,top_contract,confidence_score,is_earnings_play,data_source,outcome
 2026-04-14 10:44:39,META,put_call_low,Bullish Put/Call Skew,0.5,0.5,657.7,0.5,28.5,149112,"CALL $650.0 2026-04-15 Vol:9,323",73,0,yfinance,
+2026-04-15 10:30:22,XLE,put_call_high,Bearish Put/Call Skew,3.11,2.0,55.66,3.11,30.2,56562,"PUT $50.0 2026-04-17 Vol:12,381",80,0,yfinance,
+2026-04-15 10:30:58,XBI,put_call_low,Bullish Put/Call Skew,0.38,0.5,135.84,0.38,36.9,15355,"CALL $145.0 2026-04-24 Vol:4,001",76,0,yfinance,

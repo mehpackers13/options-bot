@@ -29,7 +29,7 @@ DISCORD_HEALTH_WEBHOOK_URL = os.environ.get("DISCORD_HEALTH_WEBHOOK_URL", "")
 # ============================================================
 #  STEP 2: Tickers to watch (add/remove as you like)
 # ============================================================
-TICKERS = ["SPY", "QQQ", "AAPL", "TSLA", "NVDA", "AMD", "META"]
+TICKERS = ["SPY", "QQQ", "AAPL", "TSLA", "NVDA", "AMD", "META", "XLK", "XLE", "XLF", "XBI"]
 
 # ============================================================
 #  Scan frequency: how often to check during market hours

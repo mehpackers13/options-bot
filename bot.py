@@ -374,6 +374,23 @@ def send_discord_alert(
         )
         fields.append({"name": "🔥 Hottest Contract", "value": val, "inline": False})
 
+        # Exit strategy: target +20%, stop -10%, days to expiry
+        last_price = float(c.get("last") or 0)
+        if last_price > 0:
+            target = round(last_price * 1.20, 2)
+            stop   = round(last_price * 0.90, 2)
+            try:
+                exp_date  = datetime.datetime.strptime(c["expiry"], "%Y-%m-%d").date()
+                today_d   = datetime.datetime.now(ET).date()
+                days_left = (exp_date - today_d).days
+                sell_days = max(0, min(2, days_left - 1))
+                sell_by   = (today_d + datetime.timedelta(days=sell_days)).strftime("%b %-d")
+                time_str  = f"\n⏳ **{days_left}d** to expiry — sell by **{sell_by}**"
+            except Exception:
+                time_str  = ""
+            exit_val = f"🎯 **Target**: ${target} (+20%)\n🛑 **Stop Loss**: ${stop} (-10%){time_str}"
+            fields.append({"name": "📊 Exit Strategy", "value": exit_val, "inline": False})
+
     if context:
         fields.append({"name": "📰 Context", "value": context[:1024], "inline": False})
 

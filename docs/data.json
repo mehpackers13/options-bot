@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-04-15T22:25:17.484731Z",
-  "last_scan": "2026-04-15 18:25:17 ET",
+  "generated_at": "2026-04-16T14:47:40.826318Z",
+  "last_scan": "2026-04-16 10:47:40 ET",
   "stats": {
     "total_alerts": 3,
     "overall_hit_rate": null,
@@ -22,42 +22,7 @@
     "earnings_plays": 0
   },
   "unit_total": 0,
-  "today_alerts": [
-    {
-      "timestamp": "2026-04-15 10:30:58",
-      "ticker": "XBI",
-      "signal_type": "put_call_low",
-      "signal_label": "Bullish Put/Call Skew",
-      "signal_value": "0.38",
-      "threshold_used": "0.5",
-      "price_at_alert": "135.84",
-      "put_call_ratio": "0.38",
-      "avg_iv": "36.9",
-      "total_volume": "15355",
-      "top_contract": "CALL $145.0 2026-04-24 Vol:4,001",
-      "confidence_score": "76",
-      "is_earnings_play": "0",
-      "data_source": "yfinance",
-      "outcome": ""
-    },
-    {
-      "timestamp": "2026-04-15 10:30:22",
-      "ticker": "XLE",
-      "signal_type": "put_call_high",
-      "signal_label": "Bearish Put/Call Skew",
-      "signal_value": "3.11",
-      "threshold_used": "2.0",
-      "price_at_alert": "55.66",
-      "put_call_ratio": "3.11",
-      "avg_iv": "30.2",
-      "total_volume": "56562",
-      "top_contract": "PUT $50.0 2026-04-17 Vol:12,381",
-      "confidence_score": "80",
-      "is_earnings_play": "0",
-      "data_source": "yfinance",
-      "outcome": ""
-    }
-  ],
+  "today_alerts": [],
   "alerts": [
     {
       "timestamp": "2026-04-15 10:30:58",

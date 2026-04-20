@@ -1820,3 +1820,6 @@
 [2026-04-20 15:52:17 ET] [INFO]   XBI: no raw signals  (PC=0.81, IV=31.1%, Vol=14,330)
 [2026-04-20 15:52:17 ET] [INFO] Scan complete — 0 alerts fired. 8 signal(s) filtered out. Silence = discipline.
 [2026-04-20 16:33:40 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)
+[2026-04-20 16:53:40 ET] [INFO] 4pm daily summary — 2026-04-20 16:53 ET
+[2026-04-20 16:53:40 ET] [INFO] 4pm daily summary sent to Discord
+[2026-04-20 16:53:40 ET] [INFO] 4pm summary complete

@@ -54,9 +54,9 @@ jobs:
         run: |
           git config user.name  "options-bot[actions]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add alerts_log.csv bot.log data/ docs/data.json 2>/dev/null || true
-          git diff --staged --quiet && echo "Nothing to commit." && exit 0
-          git commit -m "📊 scan $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git status --short
+          git diff --quiet HEAD && echo "Nothing to commit." && exit 0
+          git commit -a -m "📊 scan $(date -u '+%Y-%m-%d %H:%M UTC')"
           for attempt in 1 2 3; do
             git fetch origin main
             git rebase -X ours origin/main && git push && echo "Push succeeded on attempt $attempt." && break

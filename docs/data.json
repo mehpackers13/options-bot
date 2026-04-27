@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-24T21:59:21.864019Z",
+  "generated_at": "2026-04-27T03:28:48.509738Z",
   "last_scan": "2026-04-24 17:59:21 ET",
   "stats": {
     "total_alerts": 3,
@@ -87,7 +87,7 @@
     "next_week_focus": "N/A",
     "threshold_recommendation": "N/A",
     "full_summary": "AI analysis unavailable this week.",
-    "generated_at": "2026-04-20T04:19:59.499740Z",
+    "generated_at": "2026-04-27T03:28:48.447980Z",
     "alerts_analyzed": 3,
     "rated_alerts": 0,
     "type": "weekly"

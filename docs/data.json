@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-28T22:51:29.115781Z",
-  "last_scan": "2026-05-28 18:51:29 ET",
+  "generated_at": "2026-05-29T16:33:22.203310Z",
+  "last_scan": "2026-05-29 12:33:22 ET",
   "stats": {
-    "total_alerts": 3,
+    "total_alerts": 5,
     "overall_hit_rate": null,
     "rated_count": 0,
     "by_signal_type": {
@@ -13,6 +13,12 @@
         "hit_rate": null
       },
       "put_call_high": {
+        "total": 2,
+        "rated": 0,
+        "hits": 0,
+        "hit_rate": null
+      },
+      "volume_spike": {
         "total": 1,
         "rated": 0,
         "hits": 0,
@@ -22,8 +28,77 @@
     "earnings_plays": 0
   },
   "unit_total": 0,
-  "today_alerts": [],
+  "today_alerts": [
+    {
+      "timestamp": "2026-05-29 12:33:15",
+      "ticker": "XLK",
+      "signal_type": "put_call_high",
+      "signal_label": "Bearish Put/Call Skew",
+      "signal_value": "10.54",
+      "threshold_used": "2.0",
+      "price_at_alert": "190.54",
+      "put_call_ratio": "10.54",
+      "avg_iv": "33.2",
+      "total_volume": "35713",
+      "top_contract": "PUT $127.0 2026-06-05 Vol:28,869",
+      "confidence_score": "72",
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
+    },
+    {
+      "timestamp": "2026-05-29 12:33:13",
+      "ticker": "XLK",
+      "signal_type": "volume_spike",
+      "signal_label": "Options Volume Spike",
+      "signal_value": "5.55",
+      "threshold_used": "2.0",
+      "price_at_alert": "190.54",
+      "put_call_ratio": "10.54",
+      "avg_iv": "33.2",
+      "total_volume": "35713",
+      "top_contract": "PUT $127.0 2026-06-05 Vol:28,869",
+      "confidence_score": "72",
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
+    }
+  ],
   "alerts": [
+    {
+      "timestamp": "2026-05-29 12:33:15",
+      "ticker": "XLK",
+      "signal_type": "put_call_high",
+      "signal_label": "Bearish Put/Call Skew",
+      "signal_value": "10.54",
+      "threshold_used": "2.0",
+      "price_at_alert": "190.54",
+      "put_call_ratio": "10.54",
+      "avg_iv": "33.2",
+      "total_volume": "35713",
+      "top_contract": "PUT $127.0 2026-06-05 Vol:28,869",
+      "confidence_score": "72",
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
+    },
+    {
+      "timestamp": "2026-05-29 12:33:13",
+      "ticker": "XLK",
+      "signal_type": "volume_spike",
+      "signal_label": "Options Volume Spike",
+      "signal_value": "5.55",
+      "threshold_used": "2.0",
+      "price_at_alert": "190.54",
+      "put_call_ratio": "10.54",
+      "avg_iv": "33.2",
+      "total_volume": "35713",
+      "top_contract": "PUT $127.0 2026-06-05 Vol:28,869",
+      "confidence_score": "72",
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
+    },
     {
       "timestamp": "2026-04-15 10:30:58",
       "ticker": "XBI",

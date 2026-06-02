@@ -6,7 +6,9 @@ Checks upcoming earnings dates so the bot can:
   • Suppress noise from random activity near earnings that isn't an earnings play
 """
 
+import contextlib
 import datetime
+import io
 from typing import Optional, Tuple
 
 import pytz
@@ -18,8 +20,12 @@ ET = pytz.timezone("America/New_York")
 def get_next_earnings(ticker: str) -> Optional[datetime.date]:
     """Return the next scheduled earnings date, or None if unknown."""
     try:
-        t   = yf.Ticker(ticker)
-        cal = t.calendar
+        t = yf.Ticker(ticker)
+        # ETFs return 404 from the quoteSummary endpoint — suppress yfinance's
+        # verbose error output while still catching the exception below.
+        _sink = io.StringIO()
+        with contextlib.redirect_stdout(_sink), contextlib.redirect_stderr(_sink):
+            cal = t.calendar
 
         if cal is None:
             return None

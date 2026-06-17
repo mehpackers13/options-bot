@@ -4,3 +4,4 @@ timestamp,ticker,signal_type,signal_label,signal_value,threshold_used,price_at_a
 2026-04-15 10:30:58,XBI,put_call_low,Bullish Put/Call Skew,0.38,0.5,135.84,0.38,36.9,15355,"CALL $145.0 2026-04-24 Vol:4,001",76,0,yfinance,
 2026-05-29 12:33:13,XLK,volume_spike,Options Volume Spike,5.55,2.0,190.54,10.54,33.2,35713,"PUT $127.0 2026-06-05 Vol:28,869",72,0,yfinance,
 2026-05-29 12:33:15,XLK,put_call_high,Bearish Put/Call Skew,10.54,2.0,190.54,10.54,33.2,35713,"PUT $127.0 2026-06-05 Vol:28,869",72,0,yfinance,
+2026-06-17 12:32:05,XBI,iv_jump,Implied Volatility Spike,34.7,20.0,140.98,5.69,45.0,50667,"PUT $137.5 2026-06-18 Vol:10,075",72,0,yfinance,

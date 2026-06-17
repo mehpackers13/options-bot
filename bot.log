@@ -5298,3 +5298,4 @@
 [2026-06-17 15:10:57 ET] [INFO]   XBI [iv_jump] filtered — Gate 4 FAIL — confidence 69/100 is below the 70 threshold
 [2026-06-17 15:10:57 ET] [INFO]   XBI [put_call_high] filtered — Gate 4 FAIL — confidence 66/100 is below the 70 threshold
 [2026-06-17 15:10:58 ET] [INFO] Scan complete — 0 alerts fired. 5 signal(s) filtered out. Silence = discipline.
+[2026-06-17 17:19:31 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)

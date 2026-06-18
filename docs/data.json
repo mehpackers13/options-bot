@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-17T22:54:51.805810Z",
-  "last_scan": "2026-06-17 18:54:51 ET",
+  "generated_at": "2026-06-18T16:20:17.883375Z",
+  "last_scan": "2026-06-18 12:20:17 ET",
   "stats": {
     "total_alerts": 6,
     "overall_hit_rate": null,
@@ -34,25 +34,7 @@
     "earnings_plays": 0
   },
   "unit_total": 0,
-  "today_alerts": [
-    {
-      "timestamp": "2026-06-17 12:32:05",
-      "ticker": "XBI",
-      "signal_type": "iv_jump",
-      "signal_label": "Implied Volatility Spike",
-      "signal_value": "34.7",
-      "threshold_used": "20.0",
-      "price_at_alert": "140.98",
-      "put_call_ratio": "5.69",
-      "avg_iv": "45.0",
-      "total_volume": "50667",
-      "top_contract": "PUT $137.5 2026-06-18 Vol:10,075",
-      "confidence_score": "72",
-      "is_earnings_play": "0",
-      "data_source": "yfinance",
-      "outcome": ""
-    }
-  ],
+  "today_alerts": [],
   "alerts": [
     {
       "timestamp": "2026-06-17 12:32:05",

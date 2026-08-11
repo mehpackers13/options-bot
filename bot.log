@@ -9260,3 +9260,4 @@
 [2026-08-11 15:16:47 ET] [INFO]   Checking XBI ...
 [2026-08-11 15:16:48 ET] [INFO]   XBI [put_call_low] filtered — Gate 1 FAIL — volume ratio 0.8x is below the 3x minimum
 [2026-08-11 15:16:49 ET] [INFO] Scan complete — 0 alerts fired. 3 signal(s) filtered out. Silence = discipline.
+[2026-08-11 16:08:05 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)

@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-21T22:04:16.687750Z",
-  "last_scan": "2026-09-21 18:04:16 ET",
+  "generated_at": "2026-09-22T17:23:15.948711Z",
+  "last_scan": "2026-09-22 13:23:15 ET",
   "stats": {
-    "total_alerts": 6,
+    "total_alerts": 8,
     "overall_hit_rate": null,
     "rated_count": 0,
     "by_signal_type": {
@@ -13,13 +13,13 @@
         "hit_rate": null
       },
       "put_call_high": {
-        "total": 2,
+        "total": 3,
         "rated": 0,
         "hits": 0,
         "hit_rate": null
       },
       "volume_spike": {
-        "total": 1,
+        "total": 2,
         "rated": 0,
         "hits": 0,
         "hit_rate": null
@@ -34,8 +34,77 @@
     "earnings_plays": 0
   },
   "unit_total": 0,
-  "today_alerts": [],
+  "today_alerts": [
+    {
+      "timestamp": "2026-09-22 13:23:13",
+      "ticker": "XLF",
+      "signal_type": "put_call_high",
+      "signal_label": "Bearish Put/Call Skew",
+      "signal_value": "4.95",
+      "threshold_used": "2.0",
+      "price_at_alert": "54.84",
+      "put_call_ratio": "4.95",
+      "avg_iv": "24.3",
+      "total_volume": "127692",
+      "top_contract": "PUT $55.5 2026-09-22 Vol:44,462",
+      "confidence_score": "72",
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
+    },
+    {
+      "timestamp": "2026-09-22 13:23:11",
+      "ticker": "XLF",
+      "signal_type": "volume_spike",
+      "signal_label": "Options Volume Spike",
+      "signal_value": "6.18",
+      "threshold_used": "2.0",
+      "price_at_alert": "54.84",
+      "put_call_ratio": "4.95",
+      "avg_iv": "24.3",
+      "total_volume": "127692",
+      "top_contract": "PUT $55.5 2026-09-22 Vol:44,462",
+      "confidence_score": "72",
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
+    }
+  ],
   "alerts": [
+    {
+      "timestamp": "2026-09-22 13:23:13",
+      "ticker": "XLF",
+      "signal_type": "put_call_high",
+      "signal_label": "Bearish Put/Call Skew",
+      "signal_value": "4.95",
+      "threshold_used": "2.0",
+      "price_at_alert": "54.84",
+      "put_call_ratio": "4.95",
+      "avg_iv": "24.3",
+      "total_volume": "127692",
+      "top_contract": "PUT $55.5 2026-09-22 Vol:44,462",
+      "confidence_score": "72",
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
+    },
+    {
+      "timestamp": "2026-09-22 13:23:11",
+      "ticker": "XLF",
+      "signal_type": "volume_spike",
+      "signal_label": "Options Volume Spike",
+      "signal_value": "6.18",
+      "threshold_used": "2.0",
+      "price_at_alert": "54.84",
+      "put_call_ratio": "4.95",
+      "avg_iv": "24.3",
+      "total_volume": "127692",
+      "top_contract": "PUT $55.5 2026-09-22 Vol:44,462",
+      "confidence_score": "72",
+      "is_earnings_play": "0",
+      "data_source": "yfinance",
+      "outcome": ""
+    },
     {
       "timestamp": "2026-06-17 12:32:05",
       "ticker": "XBI",

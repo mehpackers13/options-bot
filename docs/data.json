@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-22T23:03:00.879869Z",
-  "last_scan": "2026-09-22 19:03:00 ET",
+  "generated_at": "2026-09-23T17:31:31.497451Z",
+  "last_scan": "2026-09-23 13:31:31 ET",
   "stats": {
     "total_alerts": 8,
     "overall_hit_rate": null,
@@ -34,42 +34,7 @@
     "earnings_plays": 0
   },
   "unit_total": 0,
-  "today_alerts": [
-    {
-      "timestamp": "2026-09-22 13:23:13",
-      "ticker": "XLF",
-      "signal_type": "put_call_high",
-      "signal_label": "Bearish Put/Call Skew",
-      "signal_value": "4.95",
-      "threshold_used": "2.0",
-      "price_at_alert": "54.84",
-      "put_call_ratio": "4.95",
-      "avg_iv": "24.3",
-      "total_volume": "127692",
-      "top_contract": "PUT $55.5 2026-09-22 Vol:44,462",
-      "confidence_score": "72",
-      "is_earnings_play": "0",
-      "data_source": "yfinance",
-      "outcome": ""
-    },
-    {
-      "timestamp": "2026-09-22 13:23:11",
-      "ticker": "XLF",
-      "signal_type": "volume_spike",
-      "signal_label": "Options Volume Spike",
-      "signal_value": "6.18",
-      "threshold_used": "2.0",
-      "price_at_alert": "54.84",
-      "put_call_ratio": "4.95",
-      "avg_iv": "24.3",
-      "total_volume": "127692",
-      "top_contract": "PUT $55.5 2026-09-22 Vol:44,462",
-      "confidence_score": "72",
-      "is_earnings_play": "0",
-      "data_source": "yfinance",
-      "outcome": ""
-    }
-  ],
+  "today_alerts": [],
   "alerts": [
     {
       "timestamp": "2026-09-22 13:23:13",

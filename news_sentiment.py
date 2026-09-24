@@ -27,10 +27,11 @@ def get_recent_news(ticker: str, limit: int = 5) -> list:
         items = yf.Ticker(ticker).news or []
         results = []
         for item in items[:limit]:
+            content = item.get("content") or item
             results.append({
-                "title":     item.get("title", ""),
-                "publisher": item.get("publisher", ""),
-                "link":      item.get("link", ""),
+                "title": content.get("title", ""),
+                "publisher": (content.get("provider") or {}).get("displayName", content.get("publisher", "")),
+                "link": (content.get("canonicalUrl") or {}).get("url", content.get("link", "")),
             })
         return results
     except Exception:

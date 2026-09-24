@@ -52,6 +52,9 @@ def _send_morning_briefing(ai_result: dict, stat_changes: int) -> None:
         {"name": "👀 Premarket Watchlist",      "value": watchlist_str,                               "inline": False},
     ]
 
+    for field in fields:
+        field["value"] = str(field["value"] or "N/A")[:500]
+
     payload = {
         "embeds": [{
             "title":  f"🧠 Morning Briefing — {today}",
@@ -73,6 +76,10 @@ def _send_morning_briefing(ai_result: dict, stat_changes: int) -> None:
 
 
 def main() -> None:
+    from schedule_guard import should_run
+    if not should_run("morning"):
+        print("Skipping alternate daylight-saving schedule")
+        return
     print("=" * 60)
     print(f"  MORNING ANALYSIS — {datetime.datetime.now(ET).strftime('%Y-%m-%d %H:%M ET')}")
     print("=" * 60)
@@ -81,16 +88,7 @@ def main() -> None:
     stat_changes = 0
     try:
         from self_improve import run_morning_analysis as run_stat_analysis
-        run_stat_analysis()
-        # Count changes from threshold_changes.log (last N lines)
-        changes_log = Path(__file__).parent / "threshold_changes.log"
-        if changes_log.exists():
-            today_str = datetime.datetime.now(ET).strftime("%Y-%m-%d")
-            today_lines = [
-                l for l in changes_log.read_text().splitlines()
-                if today_str in l and "CHANGE" in l
-            ]
-            stat_changes = len(today_lines)
+        stat_changes = run_stat_analysis()
     except Exception as exc:
         print(f"[morning] Statistical analysis error: {exc}")
 

@@ -172,17 +172,22 @@
 <footer>options-bot · silence = discipline · auto-refreshes every 5 min</footer>
 
 <script>
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
 const DATA_URL = "data.json";
 
 function setStatus(ts) {
   const dot = document.getElementById('sdot');
   const txt = document.getElementById('stxt');
   try {
+    if (!ts || !Number.isFinite(Date.parse(ts)) || Date.parse(ts) > Date.now() + 300000) throw new Error("Unknown scan time");
     const gen = new Date(ts);
     const ageMin = (Date.now() - gen.getTime()) / 60000;
     if (ageMin < 120) { dot.className='dot green'; txt.textContent='Live — '+Math.round(ageMin)+'m ago'; }
     else if (ageMin < 480) { dot.className='dot yellow'; txt.textContent='Last scan '+Math.round(ageMin/60)+'h ago'; }
-    else { dot.className='dot red'; txt.textContent='Stale — market closed'; }
+    else { dot.className='dot red'; txt.textContent='Stale data'; }
   } catch { dot.className='dot red'; txt.textContent='Unknown'; }
 }
 
@@ -200,7 +205,7 @@ async function load() {
     const data = await res.json();
 
     document.getElementById('gen-at').textContent = data.generated_at ? new Date(data.generated_at).toLocaleString() : '—';
-    setStatus(data.generated_at);
+    setStatus('last_scan_ts' in data ? data.last_scan_ts : data.generated_at);
 
     const stats  = data.stats || {};
     const units  = data.unit_total;
@@ -217,7 +222,7 @@ async function load() {
       hu.className = 'hero-unit ' + (units > 0 ? 'hu-pos' : units < 0 ? 'hu-neg' : 'hu-neu');
     }
     document.getElementById('hero-sub').innerHTML =
-      `Hit rate: <strong>${hr != null ? hr+'%' : '—'}</strong> · ${rated} rated of ${total} alerts`;
+      `Hit rate: <strong>${escapeHtml(hr != null ? hr+'%' : '—')}</strong> · ${escapeHtml(rated)} rated of ${escapeHtml(total)} alerts`;
 
     // Cards
     const hrEl = document.getElementById('c-hr');
@@ -239,7 +244,7 @@ async function load() {
       todaySec.style.display = '';
       document.getElementById('today-rows').innerHTML = todayAlerts.map(a => {
         const icon = a.outcome === '1' ? '✅' : a.outcome === '0' ? '❌' : '⏳';
-        return `<div class="today-row">${icon} <span class="ticker-chip">${a.ticker||'?'}</span> <span class="sig-chip">${(a.signal_label||a.signal_type||'').replace(/_/g,' ')}</span> <span style="color:var(--muted);font-size:12px">conf ${a.confidence_score||'?'}/100</span></div>`;
+        return `<div class="today-row">${icon} <span class="ticker-chip">${escapeHtml(a.ticker||'?')}</span> <span class="sig-chip">${escapeHtml((a.signal_label||a.signal_type||'').replace(/_/g,' '))}</span> <span style="color:var(--muted);font-size:12px">conf ${escapeHtml(a.confidence_score||'?')}/100</span></div>`;
       }).join('');
     } else {
       todaySec.style.display = 'none';
@@ -258,9 +263,9 @@ async function load() {
                   : '<span class="outcome-pend">Pending</span>';
         const ep  = a.is_earnings_play === '1' || a.is_earnings_play === 1 ? '🎰' : '';
         return `<tr>
-          <td style="font-size:11px;color:var(--muted);white-space:nowrap">${ts}</td>
-          <td><span class="ticker-chip">${a.ticker||'?'}</span></td>
-          <td><span class="sig-chip">${sig}</span></td>
+          <td style="font-size:11px;color:var(--muted);white-space:nowrap">${escapeHtml(ts)}</td>
+          <td><span class="ticker-chip">${escapeHtml(a.ticker||'?')}</span></td>
+          <td><span class="sig-chip">${escapeHtml(sig)}</span></td>
           <td>${fmtNum(a.signal_value)}×</td>
           <td style="min-width:80px">${fmtConf(a.confidence_score)}</td>
           <td>${fmtNum(a.avg_iv)}%</td>
@@ -282,7 +287,7 @@ async function load() {
       sigEntries.sort((a,b) => (b[1].hit_rate??-1) - (a[1].hit_rate??-1));
       sigBody.innerHTML = sigEntries.map(([sig, d]) => {
         const hrCls = d.hit_rate >= 60 ? 'green' : d.hit_rate != null ? 'red' : '';
-        return `<tr><td><span class="sig-chip">${sig.replace(/_/g,' ')}</span></td><td>${d.total}</td><td>${d.rated}</td><td class="${hrCls}">${d.hit_rate != null ? d.hit_rate+'%' : '—'}</td></tr>`;
+        return `<tr><td><span class="sig-chip">${escapeHtml(sig.replace(/_/g,' '))}</span></td><td>${escapeHtml(d.total)}</td><td>${escapeHtml(d.rated)}</td><td class="${hrCls}">${escapeHtml(d.hit_rate != null ? d.hit_rate+'%' : '—')}</td></tr>`;
       }).join('');
     }
 
@@ -290,7 +295,7 @@ async function load() {
     const logEl   = document.getElementById('change-log');
     const changes = data.threshold_changes || [];
     logEl.innerHTML = changes.length
-      ? changes.map(l => `<div>${l}</div>`).join('')
+      ? changes.map(l => `<div>${escapeHtml(l)}</div>`).join('')
       : '<div class="empty">No threshold changes yet.</div>';
     if (changes.length) logEl.scrollTop = logEl.scrollHeight;
 

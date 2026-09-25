@@ -38,7 +38,6 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run scan (single pass)
-        continue-on-error: true
         env:
           DISCORD_WEBHOOK_URL:        ${{ secrets.DISCORD_WEBHOOK_URL }}
           DISCORD_HEALTH_WEBHOOK_URL: ${{ secrets.DISCORD_HEALTH_WEBHOOK_URL }}
@@ -54,13 +53,18 @@ jobs:
         run: |
           git config user.name  "options-bot[actions]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git status --short
+          git add -A -- data docs/data.json
+          for output in alerts_log.csv bets_log.csv outcomes.csv bets_placed.csv bot.log threshold_changes.log ai_brain.log model_changes.log; do
+            if [ -f "$output" ]; then git add -- "$output"; fi
+          done
           git diff --quiet HEAD && echo "Nothing to commit." && exit 0
           git commit -a -m "📊 scan $(date -u '+%Y-%m-%d %H:%M UTC')"
           for attempt in 1 2 3; do
             git fetch origin main
-            git rebase -X ours origin/main && git push && echo "Push succeeded on attempt $attempt." && break
+            git rebase origin/main && git push && echo "Push succeeded on attempt $attempt." && exit 0
             echo "Push attempt $attempt failed — retrying in 15s..."
             git rebase --abort 2>/dev/null || true
             sleep 15
           done
+          echo "Push failed after all attempts" >&2
+          exit 1

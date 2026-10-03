@@ -11,6 +11,7 @@ Gate 4 — Confidence score: composite score must be >= 70/100
 """
 
 import csv
+import math
 import datetime
 from pathlib import Path
 from typing import Optional, Tuple
@@ -100,7 +101,7 @@ def compute_confidence(
             score += 3
 
     # Put/call ratio extreme
-    if pc_ratio is not None and pc_ratio > 0:
+    if pc_ratio is not None and math.isfinite(pc_ratio) and pc_ratio >= 0:
         if pc_ratio >= 3.0 or pc_ratio <= 0.33:
             score += 10
         elif pc_ratio >= 2.5 or pc_ratio <= 0.40:
@@ -133,7 +134,7 @@ def check_all_gates(
     rated = _load_rated_alerts()
 
     # ── Gate 1: Volume must be >= 3x the 20-day average ──────────────────────
-    if volume_ratio < 3.0:
+    if not math.isfinite(volume_ratio) or volume_ratio < 3.0:
         return (
             False, 0,
             f"Gate 1 FAIL — volume ratio {volume_ratio:.1f}x is below the 3x minimum"

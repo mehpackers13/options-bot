@@ -50,6 +50,8 @@ def init() -> None:
     """
     global _tradier_token, _source_label
 
+    _tradier_token = ""
+    _source_label = "yfinance"
     token = os.environ.get("TRADIER_API_TOKEN", "").strip()
     if not token:
         print("[data_sources] No TRADIER_API_TOKEN — using yfinance (15-min delayed)")

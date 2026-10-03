@@ -12,6 +12,8 @@ import json
 from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
+from time_utils import parse_timestamp, last_completed_scan
+from safe_state import atomic_json
 
 BASE = Path(__file__).parent
 DOCS = BASE / "docs"
@@ -118,13 +120,13 @@ def read_unit_total(alerts):
 
 def read_today_alerts(alerts):
     """Return alerts from the last 24 hours."""
-    cutoff = datetime.utcnow() - timedelta(hours=24)
+    cutoff = datetime.now().astimezone() - timedelta(hours=24)
     today = []
     for a in alerts:
         ts_str = a.get("timestamp", "")
         try:
-            ts = datetime.strptime(ts_str[:19], "%Y-%m-%d %H:%M:%S")
-            if ts >= cutoff:
+            ts = parse_timestamp(ts_str, "America/New_York")
+            if ts and cutoff <= ts <= datetime.now().astimezone():
                 today.append(a)
         except Exception:
             pass
@@ -141,11 +143,15 @@ def main():
     unit_total = read_unit_total(alerts)
     today_alerts = read_today_alerts(alerts)
 
+    for row in alerts:
+        stamp = parse_timestamp(row.get("timestamp"), "America/New_York")
+        row["timestamp_iso"] = stamp.isoformat() if stamp else None
     recent = list(reversed(alerts[-50:]))
 
     data = {
         "generated_at":      datetime.utcnow().isoformat() + "Z",
         "last_scan":         last_scan,
+        "last_scan_ts":      last_completed_scan(BASE / "bot.log", "America/New_York"),
         "stats":             stats,
         "unit_total":        unit_total,
         "today_alerts":      today_alerts,
@@ -156,8 +162,7 @@ def main():
     }
 
     out = DOCS / "data.json"
-    with open(out, "w") as f:
-        json.dump(data, f, indent=2)
+    atomic_json(out, data)
 
     print(
         f"✓ docs/data.json written — {len(recent)} alerts, "

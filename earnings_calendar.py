@@ -48,8 +48,10 @@ def get_next_earnings(ticker: str) -> Optional[datetime.date]:
                 raw = raw[0] if raw else None
             if raw is None:
                 return None
-            if hasattr(raw, "date"):
+            if isinstance(raw, datetime.datetime):
                 return raw.date()
+            if isinstance(raw, datetime.date):
+                return raw
             if isinstance(raw, str):
                 return datetime.date.fromisoformat(raw[:10])
     except Exception:
@@ -66,9 +68,9 @@ def earnings_within_hours(ticker: str, hours: int = 24) -> Tuple[bool, Optional[
     now       = datetime.datetime.now(ET)
     today     = now.date()
     delta_days = (date - today).days
-    hours_away = delta_days * 24 - now.hour   # rough estimate
-
-    return (-24 <= hours_away <= hours), date
+    # The provider gives a date, not an exact announcement time.
+    # Use calendar-day proximity and never include a past earnings date.
+    return (0 <= delta_days <= hours / 24), date
 
 
 def is_earnings_play(ticker: str) -> Tuple[bool, Optional[datetime.date]]:

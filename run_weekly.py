@@ -39,6 +39,9 @@ def _send_weekly_report(result: dict, alert_count: int, rated: int) -> None:
         {"name": "📝 Full Summary",      "value": result.get("full_summary", "N/A"),             "inline": False},
     ]
 
+    for field in fields:
+        field["value"] = str(field["value"] or "N/A")[:500]
+
     payload = {
         "embeds": [{
             "title":  f"📅 Weekly Report — {week_label}",
@@ -60,6 +63,10 @@ def _send_weekly_report(result: dict, alert_count: int, rated: int) -> None:
 
 
 def main() -> None:
+    from schedule_guard import should_run
+    if not should_run("weekly"):
+        print("Skipping alternate daylight-saving schedule")
+        return
     print("=" * 60)
     print(f"  WEEKLY REPORT — {datetime.datetime.now(ET).strftime('%Y-%m-%d %H:%M ET')}")
     print("=" * 60)

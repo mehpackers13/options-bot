@@ -1,0 +1,131 @@
+{
+  "n": 140,
+  "hits": 88,
+  "hit_rate": 0.6286,
+  "z": 3.043,
+  "p": 0.0023,
+  "expectancy_per_bet": 0.069,
+  "note": "Assumes options bet pays ~70% on win, -100% on loss",
+  "per_ticker_top": [
+    {
+      "ticker": "ORCL",
+      "n": 8,
+      "hits": 7,
+      "hit_rate": 0.875
+    },
+    {
+      "ticker": "AVGO",
+      "n": 7,
+      "hits": 7,
+      "hit_rate": 1.0
+    },
+    {
+      "ticker": "ADBE",
+      "n": 6,
+      "hits": 4,
+      "hit_rate": 0.667
+    },
+    {
+      "ticker": "CRM",
+      "n": 6,
+      "hits": 5,
+      "hit_rate": 0.833
+    },
+    {
+      "ticker": "VXX",
+      "n": 5,
+      "hits": 5,
+      "hit_rate": 1.0
+    },
+    {
+      "ticker": "NFLX",
+      "n": 4,
+      "hits": 2,
+      "hit_rate": 0.5
+    },
+    {
+      "ticker": "WMT",
+      "n": 4,
+      "hits": 1,
+      "hit_rate": 0.25
+    },
+    {
+      "ticker": "COP",
+      "n": 4,
+      "hits": 2,
+      "hit_rate": 0.5
+    },
+    {
+      "ticker": "ABBV",
+      "n": 4,
+      "hits": 3,
+      "hit_rate": 0.75
+    },
+    {
+      "ticker": "MRK",
+      "n": 4,
+      "hits": 2,
+      "hit_rate": 0.5
+    },
+    {
+      "ticker": "NKE",
+      "n": 4,
+      "hits": 3,
+      "hit_rate": 0.75
+    },
+    {
+      "ticker": "UVXY",
+      "n": 4,
+      "hits": 4,
+      "hit_rate": 1.0
+    },
+    {
+      "ticker": "AAPL",
+      "n": 3,
+      "hits": 1,
+      "hit_rate": 0.333
+    },
+    {
+      "ticker": "QCOM",
+      "n": 3,
+      "hits": 1,
+      "hit_rate": 0.333
+    },
+    {
+      "ticker": "PYPL",
+      "n": 3,
+      "hits": 3,
+      "hit_rate": 1.0
+    },
+    {
+      "ticker": "JPM",
+      "n": 3,
+      "hits": 1,
+      "hit_rate": 0.333
+    },
+    {
+      "ticker": "WFC",
+      "n": 3,
+      "hits": 2,
+      "hit_rate": 0.667
+    },
+    {
+      "ticker": "MS",
+      "n": 3,
+      "hits": 1,
+      "hit_rate": 0.333
+    },
+    {
+      "ticker": "V",
+      "n": 3,
+      "hits": 2,
+      "hit_rate": 0.667
+    },
+    {
+      "ticker": "UNH",
+      "n": 3,
+      "hits": 2,
+      "hit_rate": 0.667
+    }
+  ]
+}

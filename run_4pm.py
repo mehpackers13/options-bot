@@ -12,6 +12,7 @@ import pytz
 
 import config
 import data_sources
+import rate_alerts
 from bot import fetch_vix, _send_4pm_summary, log
 
 ET        = pytz.timezone("America/New_York")
@@ -43,6 +44,15 @@ def main() -> None:
     log(f"4pm daily summary — {now.strftime('%Y-%m-%d %H:%M ET')}")
 
     data_sources.init()
+
+    # Rate yesterday's (and older) alerts first so self_improve has fresh data.
+    try:
+        r = rate_alerts.run()
+        if r["graded"]:
+            log(f"4pm rating: {r['graded']} alerts graded "
+                f"({r['hits']} hits / {r['misses']} misses, {r['skipped']} not ready)")
+    except Exception as exc:
+        log(f"4pm rating failed: {exc}", "WARN")
 
     vix_now = fetch_vix()
     alerts_today, _ = _count_alerts_today()

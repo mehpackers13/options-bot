@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T22:16:08.380997Z",
+  "generated_at": "2026-10-19T03:53:10.225122Z",
   "last_scan": "2026-10-16 18:16:08 ET",
   "stats": {
     "total_alerts": 8,
@@ -177,16 +177,16 @@
   "ai_daily": {},
   "ai_weekly": {
     "weekly_headline": "Weekly AI analysis unavailable.",
-    "hit_rate_summary": "no rated alerts yet",
+    "hit_rate_summary": "2/2 = 100%",
     "best_signal_type": "N/A",
     "worst_signal_type": "N/A",
     "key_lesson": "N/A",
     "next_week_focus": "N/A",
     "threshold_recommendation": "N/A",
     "full_summary": "AI analysis unavailable this week.",
-    "generated_at": "2026-10-12T07:00:30.766157Z",
+    "generated_at": "2026-10-19T03:53:10.155330Z",
     "alerts_analyzed": 2,
-    "rated_alerts": 0,
+    "rated_alerts": 2,
     "type": "weekly"
   }
 }

@@ -47,6 +47,7 @@ jobs:
           name: afternoon-data-${{ github.run_id }}
           path: |
             bot.log
+            alerts_log.csv
           if-no-files-found: ignore
           retention-days: 1
 
@@ -75,7 +76,10 @@ jobs:
         run: |
           git config user.name  "options-bot[actions]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add bot.log 2>/dev/null || true
+          # one add per file: a single missing path makes a multi-path add stage nothing
+          for f in bot.log alerts_log.csv; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
           git diff --staged --quiet && echo "Nothing to commit." && exit 0
           git commit -m "📊 4pm summary $(date -u '+%Y-%m-%d %H:%M UTC')"
           for attempt in 1 2 3; do

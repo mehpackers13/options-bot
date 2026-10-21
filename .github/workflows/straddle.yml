@@ -1,0 +1,65 @@
+name: Straddle Forward Test (paper)
+
+# Paper-only test of the volume-spike signal: does buying a straddle on a
+# >=3x volume day actually make money? See straddle_tracker.py.
+# Must run AFTER the 4pm ET close on the same ET date. GitHub delays
+# scheduled runs by up to ~3h, so there are three tries; the script refuses
+# to run before 16:15 ET and never logs the same ticker/day twice.
+
+on:
+  schedule:
+    - cron: "40 21 * * 1-5"   # 5:40pm EDT / 4:40pm EST
+    - cron: "10 0 * * 2-6"    # 8:10pm EDT / 7:10pm EST (UTC is already the next day)
+    - cron: "40 1 * * 2-6"    # 9:40pm EDT / 8:40pm EST
+  workflow_dispatch:
+
+# Own lock: sharing "options-git" would let the 15-min scans cancel this
+# run while it waits. Only this workflow writes the straddle files, so a
+# plain rebase before pushing can't conflict.
+concurrency:
+  group: options-straddle
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  straddle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run straddle tracker
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python straddle_tracker.py
+
+      - name: Commit and push
+        run: |
+          git config user.name  "options-bot[actions]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for f in data/straddle_log.csv data/straddle_summary.json; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
+          git diff --staged --quiet && echo "Nothing to commit." && exit 0
+          git commit -m "📝 straddle test $(date -u '+%Y-%m-%d %H:%M UTC')"
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin main && git push && echo "Pushed on attempt $attempt." && exit 0
+            echo "Push attempt $attempt failed — retrying in 15s..."
+            git rebase --abort 2>/dev/null || true
+            sleep 15
+          done
+          exit 1

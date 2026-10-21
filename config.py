@@ -14,10 +14,7 @@ import os
 #  When running on GitHub Actions the value comes from your
 #  repository secret (DISCORD_WEBHOOK_URL) automatically.
 # ============================================================
-DISCORD_WEBHOOK_URL = os.environ.get(
-    "DISCORD_WEBHOOK_URL",
-    "https://discord.com/api/webhooks/1486226388330745968/NkZeJgc8azwz7EYNPAdBflriwhlK5WnQU4RMUVYl005042sM7UN0iSN5j9z4e5KmhNqz"
-)
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "")
 
 # ============================================================
 #  OPTIONAL: Second webhook for a separate #bot-health channel

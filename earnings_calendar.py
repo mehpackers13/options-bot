@@ -48,6 +48,10 @@ def get_next_earnings(ticker: str) -> Optional[datetime.date]:
                 raw = raw[0] if raw else None
             if raw is None:
                 return None
+            # yfinance 1.x gives plain datetime.date objects, which have no
+            # .date() method — without this check every lookup returned None.
+            if isinstance(raw, datetime.date) and not isinstance(raw, datetime.datetime):
+                return raw
             if hasattr(raw, "date"):
                 return raw.date()
             if isinstance(raw, str):

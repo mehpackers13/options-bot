@@ -56,7 +56,9 @@ jobs:
             bot.log
             threshold_changes.log
             ai_brain.log
-            data/
+            data/thresholds.json
+            data/ai_suggestions.json
+            data/history.json
             docs/data.json
           if-no-files-found: ignore
           retention-days: 1
@@ -87,7 +89,12 @@ jobs:
         run: |
           git config user.name  "options-bot[actions]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add bot.log threshold_changes.log ai_brain.log data/ docs/data.json 2>/dev/null || true
+          # one add per file: a single missing path makes a multi-path add stage
+          # nothing (that's why thresholds.json was never saved before).
+          for f in bot.log threshold_changes.log ai_brain.log data/thresholds.json \
+                   data/ai_suggestions.json data/history.json docs/data.json; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
           git diff --staged --quiet && echo "Nothing to commit." && exit 0
           git commit -m "🧠 morning-analysis $(date -u '+%Y-%m-%d %H:%M UTC')"
           for attempt in 1 2 3; do

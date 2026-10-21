@@ -1,0 +1,13 @@
+{
+  "patterns_working": "Insufficient data or AI unavailable.",
+  "stop_doing": "N/A",
+  "try_today": "N/A",
+  "strategy_today": "Running standard thresholds \u2014 no AI adjustment today.",
+  "confidence_in_thresholds": "medium",
+  "premarket_watchlist": [],
+  "summary": "AI analysis unavailable today.",
+  "generated_at": "2026-10-21T16:47:11.370439Z",
+  "alerts_analyzed": 0,
+  "rated_alerts": 0,
+  "type": "morning"
+}

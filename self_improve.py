@@ -19,6 +19,11 @@ BASE_DIR        = Path(__file__).parent
 DATA_DIR        = BASE_DIR / "data"
 ALERTS_LOG      = BASE_DIR / "alerts_log.csv"
 THRESHOLDS_FILE = DATA_DIR / "thresholds.json"
+# How many rated alerts each threshold had seen when it last moved. Each move
+# is judged only on alerts rated SINCE then — otherwise the same history
+# re-triggers the same move every run (the workflow runs twice a day) and
+# ratchets a threshold to its limit within a week.
+TUNING_STATE    = DATA_DIR / "tuning_state.json"
 CHANGES_LOG     = BASE_DIR / "threshold_changes.log"
 
 ET = pytz.timezone("America/New_York")
@@ -54,6 +59,19 @@ def save_thresholds(thresholds: dict) -> None:
     DATA_DIR.mkdir(exist_ok=True)
     with open(THRESHOLDS_FILE, "w") as f:
         json.dump(thresholds, f, indent=2)
+
+
+def load_tuning_state() -> dict:
+    if TUNING_STATE.exists():
+        with open(TUNING_STATE) as f:
+            return json.load(f)
+    return {}
+
+
+def save_tuning_state(state: dict) -> None:
+    DATA_DIR.mkdir(exist_ok=True)
+    with open(TUNING_STATE, "w") as f:
+        json.dump(state, f, indent=2)
 
 
 def _log_change(message: str) -> None:
@@ -129,7 +147,7 @@ def _adjust(current: float, direction: str, key: str) -> float:
     return round(_clamp(new, key), 2)
 
 
-def adjust_and_save(stats: dict, thresholds: dict) -> int:
+def adjust_and_save(stats: dict, thresholds: dict, rated: list = None, state: dict = None) -> int:
     """
     Apply threshold adjustments based on signal stats.
     Returns the number of changes made.
@@ -142,8 +160,15 @@ def adjust_and_save(stats: dict, thresholds: dict) -> int:
         if sig_key not in stats:
             return
         s = stats[sig_key]
+        if rated is not None and state is not None:
+            # Only alerts rated since this threshold last moved count as evidence.
+            sig_rows = [r for r in rated if r.get("signal_type") == sig_key]
+            fresh = sig_rows[state.get(threshold_key, 0):]
+            hits = sum(r["_outcome"] for r in fresh)
+            s = {"total": len(fresh), "hits": hits,
+                 "hit_rate": hits / len(fresh) if fresh else 0.0}
         if s["total"] < min_samples:
-            print(f"  {sig_key}: only {s['total']} rated samples — need {min_samples}+, skipping")
+            print(f"  {sig_key}: only {s['total']} new rated samples — need {min_samples}+, skipping")
             return
 
         current   = thresholds[threshold_key]
@@ -168,6 +193,8 @@ def adjust_and_save(stats: dict, thresholds: dict) -> int:
             new_val = _adjust(current, direction, threshold_key)
             if new_val != current:
                 thresholds[threshold_key] = new_val
+                if rated is not None and state is not None:
+                    state[threshold_key] = len([r for r in rated if r.get("signal_type") == sig_key])
                 _log_change(
                     f"CHANGE  {threshold_key}: {current} → {new_val}  |  {reason}"
                 )
@@ -230,11 +257,13 @@ def run_morning_analysis() -> None:
         print(f"    {sig:<25} {bar}  {s['hit_rate']:.0%}  ({s['hits']}/{s['total']})")
 
     thresholds = load_thresholds()
+    state = load_tuning_state()
     print("\n  Checking thresholds ...")
-    changes = adjust_and_save(stats, thresholds)
+    changes = adjust_and_save(stats, thresholds, rated, state)
 
     if changes > 0:
         save_thresholds(thresholds)
+        save_tuning_state(state)
         _log_change(
             f"SESSION END — {changes} change(s) saved. "
             f"New thresholds: {json.dumps(thresholds)}"

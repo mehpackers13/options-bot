@@ -101,11 +101,11 @@ FIELDS = [
     "call_bid_in", "call_ask_in", "call_last_in", "call_src_in",
     "put_bid_in", "put_ask_in", "put_last_in", "put_src_in",
     "entry_mid", "entry_ask", "implied_move_pct", "wide_in", "planned_exit",
-    "earnings_date", "earnings_phase",
+    "earnings_date", "earnings_phase", "event_day",
     # exit
     "exit_date", "exit_ts", "exit_lag_days", "close_entry_final", "spot_exit",
     "call_bid_out", "call_ask_out", "call_last_out", "call_src_out",
-    "put_bid_out", "put_ask_out", "put_last_out", "put_src_out",
+    "put_bid_out", "put_ask_out", "put_last_out", "put_src_out", "wide_out",
     "exit_mid", "exit_bid", "intrinsic_exit",
     "pnl_mid", "pnl_cons", "pnl_floor",
     "realized_move_pct", "max_move_pct", "hit3", "vol_mult_final",
@@ -257,20 +257,69 @@ def save_rows(rows: list) -> None:
 
 # ── Entry ─────────────────────────────────────────────────────────────────────
 
+def _reaction_days(ts) -> set:
+    """The session(s) that trade on an earnings report: the report day if it
+    came before the open, the next session if after the close, both if the
+    time is unknown (Yahoo gives midnight)."""
+    d = ts.date()
+    nxt = add_trading_days(d, 1)
+    if ts.hour == 0 and ts.minute == 0:
+        return {d, nxt}
+    return {d} if ts.hour < 12 else {nxt}
+
+
 def earnings_phase(ticker: str, today: datetime.date, planned_exit: datetime.date):
-    """Where the company's earnings date sits relative to this trade. Volume
-    spikes are often earnings reactions, and post-earnings straddles behave
-    nothing like pre-earnings ones, so results must be split on this."""
-    d = get_next_earnings(ticker)
-    if d is None:
-        return "", "unknown"
-    if d < today:
-        return d.isoformat(), "before_entry"
-    if d == today:
-        return d.isoformat(), "entry_day"
-    if d <= planned_exit:
-        return d.isoformat(), "in_window"
-    return d.isoformat(), "none"
+    """Where earnings sit relative to this trade. Volume spikes are often the
+    market reacting to a report, and post-report straddles behave nothing
+    like pre-report ones, so results are split on this.
+      reaction_day  today's session is the reaction to a report
+      in_window     a report's reaction session falls inside the hold
+      recent        reacted within the 5 sessions before entry
+      none / unknown"""
+    try:
+        ed = yf.Ticker(ticker).get_earnings_dates(limit=8)
+        stamps = [ts.tz_convert(ET) if ts.tzinfo else ET.localize(ts) for ts in ed.index]
+    except Exception:
+        stamps = []
+    if not stamps:
+        # Fallback: date only, no report time. The calendar also rolls to the
+        # next quarter soon after a report, so this can miss reaction days.
+        d = get_next_earnings(ticker)
+        if d is None:
+            return "", "unknown"
+        if d == today:
+            return d.isoformat(), "reaction_day"
+        if today < d <= planned_exit:
+            return d.isoformat(), "in_window"
+        return d.isoformat(), "none"
+    recent_start = today
+    for _ in range(HOLD_DAYS):
+        recent_start -= datetime.timedelta(days=1)
+        while not is_trading_day(recent_start):
+            recent_start -= datetime.timedelta(days=1)
+    best = None
+    for ts in sorted(stamps):
+        days = _reaction_days(ts)
+        if today in days:
+            return ts.isoformat(), "reaction_day"
+        if any(today < d <= planned_exit for d in days):
+            best = best or (ts.isoformat(), "in_window")
+        elif any(recent_start <= d < today for d in days):
+            best = best or (ts.isoformat(), "recent")
+    return best or ("", "none")
+
+
+def event_day(d: datetime.date) -> str:
+    """Days when volume spikes for mechanical reasons, not news: quarterly
+    options expiry + S&P rebalance (3rd Friday of Mar/Jun/Sep/Dec), the
+    Russell reconstitution (last Friday of June), and monthly expiry."""
+    if d.weekday() != 4:
+        return ""
+    if d.month == 6 and (d + datetime.timedelta(days=7)).month == 7:
+        return "russell_recon"
+    if 15 <= d.day <= 21:
+        return "quad_witching" if d.month in (3, 6, 9, 12) else "monthly_opex"
+    return ""
 
 
 def open_straddle(ticker: str, group: str, today: datetime.date, vm,
@@ -284,6 +333,7 @@ def open_straddle(ticker: str, group: str, today: datetime.date, vm,
         "planned_exit": planned_exit.isoformat(),
     }
     row["earnings_date"], row["earnings_phase"] = earnings_phase(ticker, today, planned_exit)
+    row["event_day"] = event_day(today)
 
     def skip(reason):
         row.update(status="skipped", skip_reason=reason)
@@ -405,13 +455,14 @@ def close_straddle(row: dict, bars, today: datetime.date,
     # Option marks only mean something on the evening of the exit day.
     if not on_time or cq is None or pq is None:
         return True
-    cp, csrc, _ = price_leg(cq[0], cq[1], cq[2], cq[3], now_utc)
-    pp, psrc, _ = price_leg(pq[0], pq[1], pq[2], pq[3], now_utc)
+    cp, csrc, cwide = price_leg(cq[0], cq[1], cq[2], cq[3], now_utc)
+    pp, psrc, pwide = price_leg(pq[0], pq[1], pq[2], pq[3], now_utc)
     row.update({
         "call_bid_out": _r(_num(cq[0])), "call_ask_out": _r(_num(cq[1])),
         "call_last_out": _r(_num(cq[2])), "call_src_out": csrc,
         "put_bid_out": _r(_num(pq[0])), "put_ask_out": _r(_num(pq[1])),
         "put_last_out": _r(_num(pq[2])), "put_src_out": psrc,
+        "wide_out": int(bool(cwide or pwide)),
     })
     if cp is not None and pp is not None:
         exit_mid = cp + pp
@@ -429,25 +480,44 @@ def close_straddle(row: dict, bars, today: datetime.date,
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 
-def _stats(xs: list) -> dict:
+def _stats(pairs: list) -> dict:
+    """pairs = [(entry_date, value)]. The confidence interval is built from
+    per-DATE averages: spikes cluster (16 tickers on one expiry Friday), and
+    treating each as independent would overstate certainty."""
+    xs = [v for _, v in pairs]
     n = len(xs)
     if n == 0:
-        return {"n": 0}
+        return {"n": 0, "dates": 0}
+    by_date = {}
+    for d, v in pairs:
+        by_date.setdefault(d, []).append(v)
+    dm = [sum(v) / len(v) for v in by_date.values()]
     mean = sum(xs) / n
-    out = {"n": n, "mean": round(mean, 4), "median": round(statistics.median(xs), 4),
+    out = {"n": n, "dates": len(dm), "mean": round(mean, 4),
+           "median": round(statistics.median(xs), 4),
            "win_rate": round(sum(1 for x in xs if x > 0) / n, 3)}
-    if n >= 2:
-        sd = statistics.stdev(xs)
-        se = sd / math.sqrt(n)
-        out.update(sd=round(sd, 4), ci95=[round(mean - 1.96 * se, 4), round(mean + 1.96 * se, 4)],
-                   t=round(mean / se, 2) if se > 0 else None)
+    if len(dm) >= 3:
+        m = sum(dm) / len(dm)
+        se = statistics.stdev(dm) / math.sqrt(len(dm))
+        out.update(date_mean=round(m, 4), ci95=[round(m - 1.96 * se, 4), round(m + 1.96 * se, 4)],
+                   t=round(m / se, 2) if se > 0 else None)
     return out
+
+
+def _clean(r: dict) -> bool:
+    """Both legs priced off a real two-sided, not-wide quote at entry AND exit."""
+    return (r.get("call_src_in") == r.get("put_src_in") == "mid"
+            and r.get("call_src_out") == r.get("put_src_out") == "mid"
+            and str(r.get("wide_in")) == "0" and str(r.get("wide_out")) == "0")
 
 
 def summarize(rows: list) -> dict:
     def f(r, k):
         v = r.get(k, "")
         return None if v in ("", None) else float(v)
+
+    def st(rs, k):
+        return _stats([(r["entry_date"], f(r, k)) for r in rs if f(r, k) is not None])
 
     groups = {}
     for g in ("spike", "near", "control"):
@@ -458,16 +528,16 @@ def summarize(rows: list) -> dict:
             "closed": len(closed),
             "skipped": sum(1 for r in rows if r.get("group") == g and r.get("status") == "skipped"),
             "late_exits": len(closed) - len(on_time),
-            "pnl_mid": _stats([f(r, "pnl_mid") for r in on_time if f(r, "pnl_mid") is not None]),
-            "pnl_cons": _stats([f(r, "pnl_cons") for r in on_time if f(r, "pnl_cons") is not None]),
-            "pnl_floor": _stats([f(r, "pnl_floor") for r in closed if f(r, "pnl_floor") is not None]),
-            "hit3_rate": _stats([f(r, "hit3") for r in closed if f(r, "hit3") is not None]).get("mean"),
-            "avg_implied_move_pct": _stats([f(r, "implied_move_pct") for r in closed
-                                            if f(r, "implied_move_pct") is not None]).get("mean"),
+            "pnl_mid": st(on_time, "pnl_mid"),
+            "pnl_mid_clean_quotes": st([r for r in on_time if _clean(r)], "pnl_mid"),
+            "pnl_mid_no_event_day": st([r for r in on_time if not r.get("event_day")], "pnl_mid"),
+            "pnl_cons": st(on_time, "pnl_cons"),
+            "pnl_floor": st(closed, "pnl_floor"),
+            "hit3_rate": st(closed, "hit3").get("mean"),
+            "avg_implied_move_pct": st(closed, "implied_move_pct").get("mean"),
             "pnl_mid_by_earnings": {
-                ph: _stats([f(r, "pnl_mid") for r in on_time
-                            if r.get("earnings_phase") == ph and f(r, "pnl_mid") is not None])
-                for ph in ("entry_day", "in_window", "before_entry", "none", "unknown")
+                ph: st([r for r in on_time if r.get("earnings_phase") == ph], "pnl_mid")
+                for ph in ("reaction_day", "in_window", "recent", "none", "unknown")
             },
         }
     skips = {}
@@ -480,15 +550,17 @@ def summarize(rows: list) -> dict:
         "paper_only": True,
         "question": "Do straddles bought on >=3x stock-volume days make money, and beat random days?",
         "groups": groups, "skip_reasons": skips,
-        "verdict_rule": "Needs spike pnl_mid n>=30 with ci95 above 0 AND spike mean above control mean.",
+        "verdict_rule": ("Needs >=30 scored spike trades on >=20 different days, a date-clustered "
+                         "ci95 above 0, and a spike mean above the control mean."),
     }
 
 
 def _verdict(s: dict) -> str:
     sp = s["groups"]["spike"]["pnl_mid"]
     ct = s["groups"]["control"]["pnl_mid"]
-    if sp.get("n", 0) < 30:
-        return f"Collecting data ({sp.get('n', 0)}/30 spike trades scored)."
+    if sp.get("n", 0) < 30 or sp.get("dates", 0) < 20:
+        return (f"Collecting data ({sp.get('n', 0)}/30 spike trades scored, "
+                f"{sp.get('dates', 0)}/20 different days).")
     lo = sp["ci95"][0]
     if lo > 0 and sp["mean"] > ct.get("mean", -1):
         return "Spike straddles show a real profit so far."
@@ -532,8 +604,8 @@ def post_discord(opened: list, closed: list, summary: dict, weekly: bool) -> Non
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def run(dry_run: bool = False) -> int:
-    now_et = datetime.datetime.now(ET)
+def run(dry_run: bool = False, now_et: Optional[datetime.datetime] = None) -> int:
+    now_et = now_et or datetime.datetime.now(ET)
     now_utc = now_et.astimezone(pytz.utc)
     today = now_et.date()
     if (now_et.hour, now_et.minute) < EARLIEST_RUN_ET:

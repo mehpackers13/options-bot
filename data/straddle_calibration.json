@@ -1,0 +1,175 @@
+{
+  "date": "2026-10-20",
+  "underlyings": {
+    "SPY": {
+      "index": "VIX9D",
+      "index_date": "2026-10-20",
+      "iv": 0.1627,
+      "expiry": "2026-10-30",
+      "real_mid": 14.175,
+      "model": 16.524,
+      "model_over_real": 1.166,
+      "half_spread": 0.0025
+    },
+    "QQQ": {
+      "index": "VXN",
+      "index_date": "2026-10-20",
+      "iv": 0.2522,
+      "expiry": "2026-10-30",
+      "real_mid": 22.63,
+      "model": 23.909,
+      "model_over_real": 1.056,
+      "half_spread": 0.0049
+    },
+    "DIA": {
+      "index": "VXD",
+      "index_date": "2026-10-20",
+      "iv": 0.1541,
+      "expiry": "2026-10-30",
+      "real_mid": 10.15,
+      "model": 10.671,
+      "model_over_real": 1.051,
+      "half_spread": 0.0197
+    },
+    "IWM": {
+      "index": "RVX",
+      "index_date": "2026-10-20",
+      "iv": 0.2182,
+      "expiry": "2026-10-30",
+      "real_mid": 7.23,
+      "model": 7.952,
+      "model_over_real": 1.1,
+      "half_spread": 0.0069
+    },
+    "GLD": {
+      "index": "GVZ",
+      "index_date": "2026-10-20",
+      "iv": 0.2183,
+      "expiry": "2026-10-30",
+      "real_mid": 9.8,
+      "model": 10.896,
+      "model_over_real": 1.112,
+      "half_spread": 0.0204
+    },
+    "USO": {
+      "index": "OVX",
+      "index_date": "2026-10-20",
+      "iv": 0.5211,
+      "expiry": "2026-10-30",
+      "real_mid": 10.275,
+      "model": 11.068,
+      "model_over_real": 1.077,
+      "half_spread": 0.0754
+    },
+    "SLV": {
+      "index": "VXSLV",
+      "index_date": "2026-10-20",
+      "iv": 0.3663,
+      "expiry": "2026-10-30",
+      "real_mid": 2.305,
+      "model": 2.52,
+      "model_over_real": 1.093,
+      "half_spread": 0.0325
+    },
+    "TLT": {
+      "index": "VXTLT",
+      "index_date": "2026-10-20",
+      "iv": 0.1484,
+      "expiry": "2026-10-30",
+      "real_mid": 1.375,
+      "model": 1.573,
+      "model_over_real": 1.144,
+      "half_spread": 0.0109
+    },
+    "EEM": {
+      "index": "VXEEM",
+      "index_date": "2026-10-20",
+      "iv": 0.257,
+      "expiry": "2026-10-30",
+      "real_mid": 2.095,
+      "model": 2.157,
+      "model_over_real": 1.03,
+      "half_spread": 0.0644
+    },
+    "FXI": {
+      "index": "VXFXI",
+      "index_date": "2026-10-20",
+      "iv": 0.2157,
+      "expiry": "2026-10-30",
+      "real_mid": 0.98,
+      "model": 1.04,
+      "model_over_real": 1.061,
+      "half_spread": 0.3571
+    },
+    "EWZ": {
+      "index": "VXEWZ",
+      "index_date": "2026-10-20",
+      "iv": 0.6264,
+      "expiry": "2026-10-30",
+      "real_mid": 5.305,
+      "model": 3.553,
+      "model_over_real": 0.67,
+      "half_spread": 0.0537
+    },
+    "GDX": {
+      "index": "VXGDX",
+      "index_date": "2026-10-20",
+      "iv": 0.422,
+      "expiry": "2026-10-30",
+      "real_mid": 4.895,
+      "model": 4.795,
+      "model_over_real": 0.98,
+      "half_spread": 0.0909
+    },
+    "AAPL": {
+      "index": "VXAPL",
+      "index_date": "2026-10-20",
+      "iv": 0.287,
+      "expiry": "2026-10-30",
+      "real_mid": 10.775,
+      "model": 12.883,
+      "model_over_real": 1.196,
+      "half_spread": 0.0209
+    },
+    "AMZN": {
+      "index": "VXAZN",
+      "index_date": "2026-10-20",
+      "iv": 0.4215,
+      "expiry": "2026-10-30",
+      "real_mid": 19.55,
+      "model": 14.613,
+      "model_over_real": 0.747,
+      "half_spread": 0.0153
+    },
+    "GOOG": {
+      "index": "VXGOG",
+      "index_date": "2026-10-20",
+      "iv": 0.3861,
+      "expiry": "2026-10-30",
+      "real_mid": 21.5,
+      "model": 17.201,
+      "model_over_real": 0.8,
+      "half_spread": 0.0209
+    },
+    "GS": {
+      "index": "VXGS",
+      "index_date": "2026-10-20",
+      "iv": 0.3089,
+      "expiry": "2026-10-30",
+      "real_mid": 37.3,
+      "model": 36.096,
+      "model_over_real": 0.968,
+      "half_spread": 0.0831
+    },
+    "IBM": {
+      "index": "VXIBM",
+      "index_date": "2026-10-20",
+      "iv": 0.4519,
+      "expiry": "2026-10-30",
+      "real_mid": 19.9,
+      "model": 14.459,
+      "model_over_real": 0.727,
+      "half_spread": 0.0528
+    }
+  }
+}

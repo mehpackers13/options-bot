@@ -7,6 +7,7 @@ You can also run it manually any time: python self_improve.py
 """
 
 import csv
+import hashlib
 import datetime
 import json
 from pathlib import Path
@@ -14,6 +15,7 @@ from pathlib import Path
 import pytz
 
 import config
+from storage import atomic_json, validated_thresholds
 
 BASE_DIR        = Path(__file__).parent
 DATA_DIR        = BASE_DIR / "data"
@@ -34,7 +36,7 @@ TARGET_MAX_HIT_RATE = 0.80
 
 # Hard floors/ceilings so the bot never goes to extremes
 LIMITS = {
-    "volume_spike_multiplier": (1.5, 10.0),
+    "volume_spike_multiplier": (3.0, 10.0),
     "iv_jump_percent":         (10.0, 60.0),
     "put_call_ratio_high":     (1.2, 5.0),
     "put_call_ratio_low":      (0.1, 0.8),
@@ -44,16 +46,12 @@ LIMITS = {
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
 def load_thresholds() -> dict:
-    if THRESHOLDS_FILE.exists():
-        with open(THRESHOLDS_FILE) as f:
-            return json.load(f)
-    return config.DEFAULT_THRESHOLDS.copy()
+    return validated_thresholds(THRESHOLDS_FILE, config.DEFAULT_THRESHOLDS)
 
 
 def save_thresholds(thresholds: dict) -> None:
     DATA_DIR.mkdir(exist_ok=True)
-    with open(THRESHOLDS_FILE, "w") as f:
-        json.dump(thresholds, f, indent=2)
+    atomic_json(THRESHOLDS_FILE, thresholds)
 
 
 def _log_change(message: str) -> None:
@@ -77,7 +75,7 @@ def load_rated_alerts() -> list:
     rated = []
     with open(ALERTS_LOG, newline="") as f:
         for row in csv.DictReader(f):
-            outcome = row.get("outcome", "").strip()
+            outcome = (row.get("outcome") or "").strip()
             if outcome in ("1", "0"):
                 row["_outcome"] = int(outcome)
                 rated.append(row)
@@ -200,7 +198,7 @@ def adjust_and_save(stats: dict, thresholds: dict) -> int:
 
 # ── Main entry point ───────────────────────────────────────────────────────────
 
-def run_morning_analysis() -> None:
+def run_morning_analysis() -> int:
     """
     Full self-improvement cycle. Called by bot.py each morning, or run manually.
     """
@@ -221,8 +219,13 @@ def run_morning_analysis() -> None:
             f"    0 = the alert was a false positive\n"
         )
         print("=" * 60 + "\n")
-        return
+        return 0
 
+    fingerprint = hashlib.sha256(json.dumps(rated, sort_keys=True).encode()).hexdigest()
+    saved = json.loads(THRESHOLDS_FILE.read_text()) if THRESHOLDS_FILE.exists() else {}
+    if saved.get("_ratings_fingerprint") == fingerprint:
+        print("Ratings unchanged — skipping repeated tuning.")
+        return 0
     stats = calculate_signal_stats(rated)
     print("\n  Signal performance:")
     for sig, s in stats.items():
@@ -233,8 +236,8 @@ def run_morning_analysis() -> None:
     print("\n  Checking thresholds ...")
     changes = adjust_and_save(stats, thresholds)
 
+    save_thresholds({**thresholds, "_ratings_fingerprint": fingerprint})
     if changes > 0:
-        save_thresholds(thresholds)
         _log_change(
             f"SESSION END — {changes} change(s) saved. "
             f"New thresholds: {json.dumps(thresholds)}"
@@ -249,6 +252,7 @@ def run_morning_analysis() -> None:
         print(f"    {k:<35} {v}  (range {lo}–{hi})")
 
     print("=" * 60 + "\n")
+    return changes
 
 
 if __name__ == "__main__":

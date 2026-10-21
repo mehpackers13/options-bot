@@ -5,7 +5,7 @@ Called once per weekday morning and once per week for the full weekly report.
 NEVER called on every scan — stays within GitHub Actions free tier.
 
 Requires: ANTHROPIC_API_KEY environment variable (GitHub Secret).
-Model: claude-3-5-haiku-20241022 (fast + cost-effective for daily use)
+Model: ANTHROPIC_MODEL, default claude-haiku-4-5 (fast + cost-effective for daily use)
 """
 
 import csv
@@ -23,7 +23,7 @@ DATA_DIR        = BASE / "data"
 ALERTS_LOG      = BASE / "alerts_log.csv"
 AI_SUGGESTIONS  = DATA_DIR / "ai_suggestions.json"
 AI_LOG          = BASE / "ai_brain.log"
-MODEL           = "claude-3-5-haiku-20241022"
+MODEL           = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5")
 
 
 def _log(msg: str) -> None:
@@ -37,7 +37,7 @@ def _log(msg: str) -> None:
 def _load_alerts(days: int = 7) -> list:
     if not ALERTS_LOG.exists():
         return []
-    cutoff = datetime.datetime.utcnow() - datetime.timedelta(days=days)
+    cutoff = datetime.datetime.now(ET) - datetime.timedelta(days=days)
     alerts = []
     try:
         with open(ALERTS_LOG, newline="") as f:
@@ -46,10 +46,12 @@ def _load_alerts(days: int = 7) -> list:
                     ts = datetime.datetime.fromisoformat(
                         row.get("timestamp", "").replace(" ET", "")
                     )
-                    if ts >= cutoff:
+                    if ts.tzinfo is None:
+                        ts = ET.localize(ts)
+                    if cutoff <= ts <= datetime.datetime.now(ET):
                         alerts.append(row)
                 except Exception:
-                    alerts.append(row)   # include if parse fails — better to have data
+                    continue   # malformed dates cannot establish the reporting period
     except Exception:
         pass
     return alerts
@@ -63,7 +65,7 @@ def _format_table(alerts: list) -> str:
         "-" * 75,
     ]
     for a in alerts:
-        outcome = a.get("outcome", "").strip()
+        outcome = (a.get("outcome") or "").strip()
         outcome_label = "HIT ✓" if outcome == "1" else ("MISS ✗" if outcome == "0" else "unrated")
         lines.append(
             f"{a.get('timestamp','')[:16]:<16} | "
@@ -116,7 +118,16 @@ def _parse_json_response(raw: str) -> Optional[dict]:
         clean = "\n".join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:])
     clean = clean.strip()
     try:
-        return json.loads(clean)
+        result = json.loads(clean)
+        if not isinstance(result, dict):
+            return None
+        for key, value in result.items():
+            if key == "premarket_watchlist":
+                if not isinstance(value, list) or not all(isinstance(v, str) for v in value):
+                    return None
+            elif not isinstance(value, str):
+                return None
+        return result
     except Exception:
         _log(f"Failed to parse AI JSON response: {clean[:200]}")
         return None
@@ -193,15 +204,15 @@ If there is not enough data, say so honestly. Never invent patterns that aren't 
 
 def run_weekly_analysis() -> Optional[dict]:
     """
-    Deep analysis of the past 30 days for the Sunday evening report.
+    Deep analysis of the past 7 days for the Sunday evening report.
     """
     DATA_DIR.mkdir(exist_ok=True)
-    alerts     = _load_alerts(days=30)
+    alerts     = _load_alerts(days=7)
     thresholds = _load_thresholds()
     rated      = [a for a in alerts if a.get("outcome") in ("0", "1")]
     hits       = [a for a in rated  if a.get("outcome") == "1"]
 
-    _log(f"Weekly AI analysis — {len(alerts)} alerts in 30 days, {len(rated)} rated")
+    _log(f"Weekly AI analysis — {len(alerts)} alerts in 7 days, {len(rated)} rated")
 
     hit_rate_str = (
         f"{len(hits)}/{len(rated)} = {len(hits)/len(rated)*100:.0f}%"
@@ -210,7 +221,7 @@ def run_weekly_analysis() -> Optional[dict]:
 
     prompt = f"""You are the analytical brain of a disciplined options alert bot writing its weekly performance review.
 
-PAST 30 DAYS OF ALERTS:
+PAST 7 DAYS OF ALERTS:
 {_format_table(alerts)}
 
 Overall hit rate: {hit_rate_str}

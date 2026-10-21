@@ -40,6 +40,7 @@ import os
 import random
 import statistics
 import sys
+import threading
 import time
 from pathlib import Path
 from typing import Optional
@@ -257,6 +258,36 @@ def save_rows(rows: list) -> None:
 
 # ── Entry ─────────────────────────────────────────────────────────────────────
 
+LOOKUP_TIMEOUT_S = 20
+_slow_lookups = 0
+
+
+def _with_timeout(fn, default):
+    """Run a Yahoo lookup in a daemon thread and give up after
+    LOOKUP_TIMEOUT_S. The earnings endpoint has hung for 2+ minutes; ten of
+    those would blow the job's 20-minute limit and lose the day's entries.
+    After two timeouts, stop trying for the rest of the run."""
+    global _slow_lookups
+    if _slow_lookups >= 2:
+        return default
+    box = {}
+
+    def target():
+        try:
+            box["v"] = fn()
+        except Exception:
+            pass
+
+    t = threading.Thread(target=target, daemon=True)
+    t.start()
+    t.join(LOOKUP_TIMEOUT_S)
+    if t.is_alive():
+        _slow_lookups += 1
+        log(f"Earnings lookup timed out after {LOOKUP_TIMEOUT_S}s")
+        return default
+    return box.get("v", default)
+
+
 def _reaction_days(ts) -> set:
     """The session(s) that trade on an earnings report: the report day if it
     came before the open, the next session if after the close, both if the
@@ -276,15 +307,15 @@ def earnings_phase(ticker: str, today: datetime.date, planned_exit: datetime.dat
       in_window     a report's reaction session falls inside the hold
       recent        reacted within the 5 sessions before entry
       none / unknown"""
-    try:
+    def fetch():
         ed = yf.Ticker(ticker).get_earnings_dates(limit=8)
-        stamps = [ts.tz_convert(ET) if ts.tzinfo else ET.localize(ts) for ts in ed.index]
-    except Exception:
-        stamps = []
+        return [ts.tz_convert(ET) if ts.tzinfo else ET.localize(ts) for ts in ed.index]
+
+    stamps = _with_timeout(fetch, [])
     if not stamps:
         # Fallback: date only, no report time. The calendar also rolls to the
         # next quarter soon after a report, so this can miss reaction days.
-        d = get_next_earnings(ticker)
+        d = _with_timeout(lambda: get_next_earnings(ticker), None)
         if d is None:
             return "", "unknown"
         if d == today:

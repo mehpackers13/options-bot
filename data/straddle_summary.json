@@ -1,0 +1,112 @@
+{
+  "updated": "2026-10-20T20:48:13-04:00",
+  "paper_only": true,
+  "question": "Do straddles bought on >=3x stock-volume days make money, and beat random days?",
+  "groups": {
+    "spike": {
+      "open": 1,
+      "closed": 0,
+      "skipped": 0,
+      "late_exits": 0,
+      "pnl_mid": {
+        "n": 0
+      },
+      "pnl_cons": {
+        "n": 0
+      },
+      "pnl_floor": {
+        "n": 0
+      },
+      "hit3_rate": null,
+      "avg_implied_move_pct": null,
+      "pnl_mid_by_earnings": {
+        "entry_day": {
+          "n": 0
+        },
+        "in_window": {
+          "n": 0
+        },
+        "before_entry": {
+          "n": 0
+        },
+        "none": {
+          "n": 0
+        },
+        "unknown": {
+          "n": 0
+        }
+      }
+    },
+    "near": {
+      "open": 1,
+      "closed": 0,
+      "skipped": 0,
+      "late_exits": 0,
+      "pnl_mid": {
+        "n": 0
+      },
+      "pnl_cons": {
+        "n": 0
+      },
+      "pnl_floor": {
+        "n": 0
+      },
+      "hit3_rate": null,
+      "avg_implied_move_pct": null,
+      "pnl_mid_by_earnings": {
+        "entry_day": {
+          "n": 0
+        },
+        "in_window": {
+          "n": 0
+        },
+        "before_entry": {
+          "n": 0
+        },
+        "none": {
+          "n": 0
+        },
+        "unknown": {
+          "n": 0
+        }
+      }
+    },
+    "control": {
+      "open": 3,
+      "closed": 0,
+      "skipped": 0,
+      "late_exits": 0,
+      "pnl_mid": {
+        "n": 0
+      },
+      "pnl_cons": {
+        "n": 0
+      },
+      "pnl_floor": {
+        "n": 0
+      },
+      "hit3_rate": null,
+      "avg_implied_move_pct": null,
+      "pnl_mid_by_earnings": {
+        "entry_day": {
+          "n": 0
+        },
+        "in_window": {
+          "n": 0
+        },
+        "before_entry": {
+          "n": 0
+        },
+        "none": {
+          "n": 0
+        },
+        "unknown": {
+          "n": 0
+        }
+      }
+    }
+  },
+  "skip_reasons": {},
+  "verdict_rule": "Needs spike pnl_mid n>=30 with ci95 above 0 AND spike mean above control mean.",
+  "weekly_posted": ""
+}

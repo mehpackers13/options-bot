@@ -33,6 +33,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import bisect
 import csv
 import datetime
 import io
@@ -42,6 +43,8 @@ import statistics
 import time
 from collections import defaultdict
 from functools import lru_cache
+
+from straddle_tracker import event_day     # one definition of mechanical-volume days
 from pathlib import Path
 from typing import Optional
 
@@ -115,7 +118,12 @@ def load_iv(index: str) -> dict:
             continue
         if 1.0 < v < 1000.0:            # OVX printed 325 in April 2020 — keep it
             out[d] = v / 100.0
-    return out
+    # CBOE sometimes freezes a single-stock index for weeks (VXIBM sat at
+    # 20.12 through the Feb 2018 vol spike). A frozen, too-low entry vol
+    # flatters long straddles, so treat a 3rd+ identical print as missing.
+    days = sorted(out)
+    frozen = {c for a, b, c in zip(days, days[1:], days[2:]) if out[a] == out[b] == out[c]}
+    return {d: v for d, v in out.items() if d not in frozen}
 
 
 @lru_cache(maxsize=None)
@@ -141,24 +149,36 @@ def load_dividends(ticker: str) -> dict:
         return {}
 
 
-def event_day(d: datetime.date) -> str:
-    """Same tags as straddle_tracker.event_day: mechanical-volume days."""
-    if d.weekday() != 4:
-        return ""
-    if d.month == 6 and (d + datetime.timedelta(days=7)).month == 7:
-        return "russell_recon"
-    if 15 <= d.day <= 21:
-        return "quad_witching" if d.month in (3, 6, 9, 12) else "monthly_opex"
-    return ""
-
-
 @lru_cache(maxsize=None)
-def load_earnings(ticker: str) -> set:
+def load_earnings(ticker: str) -> tuple:
+    """Report timestamps (ET). The hour says whether the market reacted the
+    same session (before the open) or the next one (after the close)."""
     try:
         ed = yf.Ticker(ticker).get_earnings_dates(limit=100)
-        return {ts.date() for ts in ed.index}
+        return tuple(ts for ts in ed.index)
     except Exception:
-        return set()
+        return ()
+
+
+def reaction_sessions(stamps, sessions: list) -> set:
+    """Map report timestamps onto the trading sessions that reacted to them
+    (same rules as straddle_tracker._reaction_days, but using real bars so
+    it works for any year)."""
+    out = set()
+    for ts in stamps:
+        d = ts.date()
+        i = bisect.bisect_left(sessions, d)
+        if i >= len(sessions):
+            continue
+        same = sessions[i] == d
+        nxt = sessions[i + 1] if same and i + 1 < len(sessions) else sessions[i]
+        if not same:                              # weekend/holiday report
+            out.add(sessions[i])
+        elif ts.hour == 0 and ts.minute == 0:     # time unknown
+            out.update({d, nxt})
+        else:
+            out.add(d if ts.hour < 12 else nxt)
+    return out
 
 
 # ── Backtest ──────────────────────────────────────────────────────────────────
@@ -168,7 +188,9 @@ def run_underlying(name: str, half_spread: float, vol_scale: float = 1.0) -> tup
     ticker = "SPY" if name == "SPY30" else name
     iv = load_iv(IV_INDEX[name])
     bars = load_bars(ticker)
-    earn = load_earnings(ticker) if ticker in STOCKS else set()
+    sessions = [b[0] for b in bars]
+    session_set = set(sessions)
+    earn = reaction_sessions(load_earnings(ticker), sessions) if ticker in STOCKS else set()
     divs = load_dividends(ticker)
     trades, skipped = [], 0
     for i in range(TRAILING_DAYS, len(bars) - HOLD_DAYS):
@@ -208,9 +230,8 @@ def run_underlying(name: str, half_spread: float, vol_scale: float = 1.0) -> tup
         # and the loss is uncapped, so watch the tail stats, not just the mean.
         short_cal = (c0 * (1 - half_spread) - c5 * (1 + half_spread)) / (c0 * (1 - half_spread))
         if earn:
-            prev = bars[i - 1][0]
             window = {b[0] for b in bars[i + 1:i + HOLD_DAYS + 1]}
-            phase = ("entry_day" if (d0 in earn or prev in earn)
+            phase = ("reaction_day" if d0 in earn
                      else "in_window" if earn & window else "none")
         else:
             phase = "none" if ticker not in STOCKS else "unknown"
@@ -222,7 +243,7 @@ def run_underlying(name: str, half_spread: float, vol_scale: float = 1.0) -> tup
             "dte_entry": (expiry - d0).days, "premium_pct": round(p0 / s0 * 100, 3),
             "move_pct": round((s5 - s0) / s0 * 100, 3), "max_move_pct": round(max(path) * 100, 3),
             "hit3": int(max(path) >= 0.03), "pnl": round(pnl, 4), "pnl_cost": round(pnl_cost, 4), "pnl_cal": round(pnl_cal, 4), "short_cal": round(short_cal, 4),
-            "earnings_phase": phase, "event_day": event_day(d0),
+            "earnings_phase": phase, "event_day": event_day(d0, session_set.__contains__),
         })
     return trades, skipped
 
@@ -312,7 +333,7 @@ def summarize(all_trades: list) -> dict:
         ctrl = [t for t in g.get("control", []) if lo <= int(t["date"][:4]) <= hi]
         res["spike_by_period"][f"{lo}-{hi}"] = {"spike": stats(sub), "spike_cal": stats(sub, "pnl_cal"),
                                                 "control": stats(ctrl), "control_cal": stats(ctrl, "pnl_cal")}
-    for ph in ("entry_day", "in_window", "none"):
+    for ph in ("reaction_day", "in_window", "none"):
         sub = [t for t in spikes if t["underlying"] in STOCKS and t["earnings_phase"] == ph]
         res["spike_by_earnings"][ph] = {"pnl": stats(sub), "pnl_cal": stats(sub, "pnl_cal")}
     for grp in ("spike", "control"):

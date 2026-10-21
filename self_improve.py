@@ -19,10 +19,11 @@ BASE_DIR        = Path(__file__).parent
 DATA_DIR        = BASE_DIR / "data"
 ALERTS_LOG      = BASE_DIR / "alerts_log.csv"
 THRESHOLDS_FILE = DATA_DIR / "thresholds.json"
-# How many rated alerts each threshold had seen when it last moved. Each move
-# is judged only on alerts rated SINCE then — otherwise the same history
-# re-triggers the same move every run (the workflow runs twice a day) and
-# ratchets a threshold to its limit within a week.
+# Which rated alerts each threshold has already used as evidence for a move.
+# Each move is judged only on alerts not used before — otherwise the same
+# history re-triggers the same move every run (the workflow runs twice a day)
+# and ratchets a threshold to its limit within a week. Alerts are tracked by
+# identity, not position, because older alerts can be rated late.
 TUNING_STATE    = DATA_DIR / "tuning_state.json"
 CHANGES_LOG     = BASE_DIR / "threshold_changes.log"
 
@@ -147,6 +148,10 @@ def _adjust(current: float, direction: str, key: str) -> float:
     return round(_clamp(new, key), 2)
 
 
+def _alert_key(row: dict) -> str:
+    return f"{row.get('timestamp', '')}|{row.get('ticker', '')}|{row.get('signal_type', '')}"
+
+
 def adjust_and_save(stats: dict, thresholds: dict, rated: list = None, state: dict = None) -> int:
     """
     Apply threshold adjustments based on signal stats.
@@ -161,9 +166,13 @@ def adjust_and_save(stats: dict, thresholds: dict, rated: list = None, state: di
             return
         s = stats[sig_key]
         if rated is not None and state is not None:
-            # Only alerts rated since this threshold last moved count as evidence.
+            # Only alerts not already used for a move of this threshold count.
             sig_rows = [r for r in rated if r.get("signal_type") == sig_key]
-            fresh = sig_rows[state.get(threshold_key, 0):]
+            used = state.get(threshold_key, [])
+            if isinstance(used, int):              # older count-based format
+                used = [_alert_key(r) for r in sig_rows[:used]]
+            used = set(used)
+            fresh = [r for r in sig_rows if _alert_key(r) not in used]
             hits = sum(r["_outcome"] for r in fresh)
             s = {"total": len(fresh), "hits": hits,
                  "hit_rate": hits / len(fresh) if fresh else 0.0}
@@ -194,7 +203,7 @@ def adjust_and_save(stats: dict, thresholds: dict, rated: list = None, state: di
             if new_val != current:
                 thresholds[threshold_key] = new_val
                 if rated is not None and state is not None:
-                    state[threshold_key] = len([r for r in rated if r.get("signal_type") == sig_key])
+                    state[threshold_key] = sorted(used | {_alert_key(r) for r in fresh})
                 _log_change(
                     f"CHANGE  {threshold_key}: {current} → {new_val}  |  {reason}"
                 )

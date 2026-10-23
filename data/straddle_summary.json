@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-21T20:14:07-04:00",
+  "updated": "2026-10-22T20:11:04-04:00",
   "paper_only": true,
   "question": "Do straddles bought on >=3x stock-volume days make money, and beat random days?",
   "groups": {
@@ -58,7 +58,7 @@
       }
     },
     "near": {
-      "open": 2,
+      "open": 4,
       "closed": 0,
       "skipped": 0,
       "late_exits": 0,
@@ -112,7 +112,7 @@
       }
     },
     "control": {
-      "open": 6,
+      "open": 9,
       "closed": 0,
       "skipped": 0,
       "late_exits": 0,

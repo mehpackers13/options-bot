@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-22T20:11:04-04:00",
+  "updated": "2026-10-23T20:01:45-04:00",
   "paper_only": true,
   "question": "Do straddles bought on >=3x stock-volume days make money, and beat random days?",
   "groups": {
@@ -112,7 +112,7 @@
       }
     },
     "control": {
-      "open": 9,
+      "open": 12,
       "closed": 0,
       "skipped": 0,
       "late_exits": 0,
@@ -168,5 +168,5 @@
   },
   "skip_reasons": {},
   "verdict_rule": "Positive only with >=30 scored spike trades on >=20 different days, the AFTER-COST (pnl_cons) ci95 above 0, >=30 scored controls, and spike mid mean above the control mid mean. Paper results are never proof.",
-  "weekly_posted": ""
+  "weekly_posted": "2026-10-23"
 }

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-27T20:44:50-04:00",
+  "updated": "2026-10-28T21:14:45-04:00",
   "paper_only": true,
   "question": "Do straddles bought on >=3x stock-volume days make money, and beat random days?",
   "groups": {
@@ -73,51 +73,54 @@
       }
     },
     "near": {
-      "open": 4,
-      "closed": 1,
+      "open": 5,
+      "closed": 2,
       "skipped": 0,
       "late_exits": 0,
       "pnl_mid": {
-        "n": 1,
-        "dates": 1,
-        "mean": -0.4294,
-        "median": -0.4294,
-        "win_rate": 0.0
+        "n": 2,
+        "dates": 2,
+        "mean": -0.195,
+        "median": -0.195,
+        "win_rate": 0.5
       },
       "pnl_mid_clean_quotes": {
-        "n": 0,
-        "dates": 0
+        "n": 1,
+        "dates": 1,
+        "mean": 0.0395,
+        "median": 0.0395,
+        "win_rate": 1.0
       },
       "pnl_mid_no_event_day": {
-        "n": 1,
-        "dates": 1,
-        "mean": -0.4294,
-        "median": -0.4294,
-        "win_rate": 0.0
+        "n": 2,
+        "dates": 2,
+        "mean": -0.195,
+        "median": -0.195,
+        "win_rate": 0.5
       },
       "pnl_cons": {
-        "n": 1,
-        "dates": 1,
-        "mean": -0.5645,
-        "median": -0.5645,
+        "n": 2,
+        "dates": 2,
+        "mean": -0.2911,
+        "median": -0.2911,
         "win_rate": 0.0
       },
       "pnl_floor": {
-        "n": 1,
-        "dates": 1,
-        "mean": -0.8361,
-        "median": -0.8361,
+        "n": 2,
+        "dates": 2,
+        "mean": -0.4773,
+        "median": -0.4773,
         "win_rate": 0.0
       },
       "hit3_rate": 1.0,
-      "avg_implied_move_pct": 4.76,
+      "avg_implied_move_pct": 5.0055,
       "pnl_mid_by_earnings": {
         "reaction_day": {
-          "n": 1,
-          "dates": 1,
-          "mean": -0.4294,
-          "median": -0.4294,
-          "win_rate": 0.0
+          "n": 2,
+          "dates": 2,
+          "mean": -0.195,
+          "median": -0.195,
+          "win_rate": 0.5
         },
         "in_window": {
           "n": 0,
@@ -143,43 +146,46 @@
     },
     "control": {
       "open": 15,
-      "closed": 3,
+      "closed": 6,
       "skipped": 0,
       "late_exits": 0,
       "pnl_mid": {
-        "n": 3,
-        "dates": 1,
-        "mean": -0.3267,
-        "median": -0.3019,
+        "n": 6,
+        "dates": 2,
+        "mean": -0.2624,
+        "median": -0.2263,
         "win_rate": 0.0
       },
       "pnl_mid_clean_quotes": {
-        "n": 0,
-        "dates": 0
+        "n": 2,
+        "dates": 1,
+        "mean": -0.2263,
+        "median": -0.2263,
+        "win_rate": 0.0
       },
       "pnl_mid_no_event_day": {
-        "n": 3,
-        "dates": 1,
-        "mean": -0.3267,
-        "median": -0.3019,
+        "n": 6,
+        "dates": 2,
+        "mean": -0.2624,
+        "median": -0.2263,
         "win_rate": 0.0
       },
       "pnl_cons": {
-        "n": 3,
-        "dates": 1,
-        "mean": -0.4756,
-        "median": -0.4944,
+        "n": 6,
+        "dates": 2,
+        "mean": -0.4012,
+        "median": -0.3654,
         "win_rate": 0.0
       },
       "pnl_floor": {
-        "n": 3,
-        "dates": 1,
-        "mean": -0.649,
-        "median": -0.7978,
+        "n": 6,
+        "dates": 2,
+        "mean": -0.7247,
+        "median": -0.8547,
         "win_rate": 0.0
       },
-      "hit3_rate": 0.6667,
-      "avg_implied_move_pct": 6.1993,
+      "hit3_rate": 0.5,
+      "avg_implied_move_pct": 5.1757,
       "pnl_mid_by_earnings": {
         "reaction_day": {
           "n": 0,
@@ -201,15 +207,18 @@
           "dates": 0
         },
         "none": {
-          "n": 2,
-          "dates": 1,
-          "mean": -0.2023,
-          "median": -0.2023,
+          "n": 3,
+          "dates": 2,
+          "mean": -0.2057,
+          "median": -0.2125,
           "win_rate": 0.0
         },
         "unknown": {
-          "n": 0,
-          "dates": 0
+          "n": 2,
+          "dates": 1,
+          "mean": -0.1908,
+          "median": -0.1908,
+          "win_rate": 0.0
         }
       }
     }

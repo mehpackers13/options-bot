@@ -1,10 +1,10 @@
 {
-  "updated": "2026-10-29T21:21:51-04:00",
+  "updated": "2026-10-30T21:03:40-04:00",
   "paper_only": true,
   "question": "Do straddles bought on >=3x stock-volume days make money, and beat random days?",
   "groups": {
     "spike": {
-      "open": 1,
+      "open": 3,
       "closed": 1,
       "skipped": 0,
       "late_exits": 0,
@@ -73,7 +73,7 @@
       }
     },
     "near": {
-      "open": 4,
+      "open": 13,
       "closed": 4,
       "skipped": 0,
       "late_exits": 0,
@@ -173,81 +173,87 @@
     },
     "control": {
       "open": 15,
-      "closed": 9,
+      "closed": 12,
       "skipped": 0,
       "late_exits": 0,
       "pnl_mid": {
-        "n": 9,
-        "dates": 3,
-        "mean": -0.266,
-        "median": -0.2402,
+        "n": 12,
+        "dates": 4,
+        "mean": -0.2816,
+        "median": -0.2711,
         "win_rate": 0.0,
-        "date_mean": -0.266,
+        "date_mean": -0.2816,
         "ci95": [
-          -0.3067,
-          -0.2252
+          -0.3146,
+          -0.2486
         ],
-        "t": -20.62
+        "t": -23.56
       },
       "pnl_mid_clean_quotes": {
-        "n": 2,
-        "dates": 1,
-        "mean": -0.2263,
-        "median": -0.2263,
+        "n": 4,
+        "dates": 2,
+        "mean": -0.3162,
+        "median": -0.3014,
         "win_rate": 0.0
       },
       "pnl_mid_no_event_day": {
-        "n": 9,
-        "dates": 3,
-        "mean": -0.266,
-        "median": -0.2402,
+        "n": 12,
+        "dates": 4,
+        "mean": -0.2816,
+        "median": -0.2711,
         "win_rate": 0.0,
-        "date_mean": -0.266,
+        "date_mean": -0.2816,
         "ci95": [
-          -0.3067,
-          -0.2252
+          -0.3146,
+          -0.2486
         ],
-        "t": -20.62
+        "t": -23.56
       },
       "pnl_cons": {
-        "n": 9,
-        "dates": 3,
-        "mean": -0.5425,
-        "median": -0.4731,
+        "n": 12,
+        "dates": 4,
+        "mean": -0.5071,
+        "median": -0.4375,
         "win_rate": 0.0,
-        "date_mean": -0.5425,
+        "date_mean": -0.5071,
         "ci95": [
-          -0.736,
-          -0.349
+          -0.6114,
+          -0.4028
         ],
-        "t": -8.86
+        "t": -13.42
       },
       "pnl_floor": {
-        "n": 9,
-        "dates": 3,
-        "mean": -0.675,
-        "median": -0.7978,
+        "n": 12,
+        "dates": 4,
+        "mean": -0.7061,
+        "median": -0.7934,
         "win_rate": 0.0,
-        "date_mean": -0.675,
+        "date_mean": -0.7061,
         "ci95": [
-          -0.7435,
-          -0.6066
+          -0.7565,
+          -0.6557
         ],
-        "t": -31.16
+        "t": -38.65
       },
-      "hit3_rate": 0.4444,
-      "avg_implied_move_pct": 4.5838,
+      "hit3_rate": 0.4167,
+      "avg_implied_move_pct": 4.6735,
       "pnl_mid_by_earnings": {
         "reaction_day": {
           "n": 0,
           "dates": 0
         },
         "in_window": {
-          "n": 2,
-          "dates": 2,
-          "mean": -0.4645,
-          "median": -0.4645,
-          "win_rate": 0.0
+          "n": 4,
+          "dates": 3,
+          "mean": -0.4352,
+          "median": -0.406,
+          "win_rate": 0.0,
+          "date_mean": -0.445,
+          "ci95": [
+            -0.5358,
+            -0.3542
+          ],
+          "t": -15.48
         },
         "recent": {
           "n": 0,
@@ -258,11 +264,17 @@
           "dates": 0
         },
         "none": {
-          "n": 3,
-          "dates": 2,
-          "mean": -0.2057,
-          "median": -0.2125,
-          "win_rate": 0.0
+          "n": 4,
+          "dates": 3,
+          "mean": -0.1976,
+          "median": -0.193,
+          "win_rate": 0.0,
+          "date_mean": -0.1961,
+          "ci95": [
+            -0.2117,
+            -0.1804
+          ],
+          "t": -39.56
         },
         "unknown": {
           "n": 4,
@@ -276,5 +288,5 @@
   },
   "skip_reasons": {},
   "verdict_rule": "Positive only with >=30 scored spike trades on >=20 different days, the AFTER-COST (pnl_cons) ci95 above 0, >=30 scored controls, and spike mid mean above the control mid mean. Paper results are never proof.",
-  "weekly_posted": "2026-10-23"
+  "weekly_posted": "2026-10-30"
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-02T07:19:25.175895Z",
+  "generated_at": "2026-11-02T21:29:13.457620Z",
   "last_scan": "2026-10-30 18:30:54 ET",
   "stats": {
     "total_alerts": 8,
@@ -182,7 +182,7 @@
     "confidence_in_thresholds": "medium",
     "premarket_watchlist": [],
     "summary": "AI analysis unavailable today.",
-    "generated_at": "2026-10-30T18:26:16.076844Z",
+    "generated_at": "2026-11-02T21:29:13.376097Z",
     "alerts_analyzed": 0,
     "rated_alerts": 0,
     "type": "morning"

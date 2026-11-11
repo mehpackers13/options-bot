@@ -14102,3 +14102,6 @@
 [2026-11-10 15:03:35 ET] [INFO]   Checking XBI ...
 [2026-11-10 15:03:36 ET] [INFO]   XBI: no raw signals  (PC=1.38, IV=40.6%, Vol=10,920)
 [2026-11-10 15:03:36 ET] [INFO] Scan complete — 0 alerts fired. 2 signal(s) filtered out. Silence = discipline.
+[2026-11-10 19:28:03 ET] [INFO] 4pm daily summary — 2026-11-10 19:28 ET
+[2026-11-10 19:28:04 ET] [INFO] 4pm daily summary sent to Discord
+[2026-11-10 19:28:04 ET] [INFO] 4pm summary complete

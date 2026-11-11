@@ -32,3 +32,4 @@ env/
 # NOTE: alerts_log.csv, bot.log, data/*.json, and docs/data.json
 # are intentionally tracked so GitHub Actions can persist state
 # and the dashboard can read them.
+data/shares_prices.pkl

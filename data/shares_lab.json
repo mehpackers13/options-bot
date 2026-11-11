@@ -1,0 +1,755 @@
+{
+ "generated": "2026-11-11T19:44:21Z",
+ "tickers": 75,
+ "dates": 3045,
+ "period": [
+  "2014-10-02",
+  "2026-11-10"
+ ],
+ "holdout_from": "2023-03-22",
+ "cost_bps": 10.0,
+ "fdr_q": 0.1,
+ "bh_threshold": 0.011369,
+ "variants": 18,
+ "passed": [],
+ "all": [
+  {
+   "mult": 5.0,
+   "hold": 5,
+   "direction": "momentum",
+   "n_trades": 294,
+   "signal": {
+    "dates": 182,
+    "trades": 182,
+    "mean_bps": 134.1,
+    "lo_bps": 34.4,
+    "hi_bps": 233.8,
+    "t": 2.69,
+    "p": 0.007143235522653946
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -17.08,
+    "lo_bps": -23.94,
+    "hi_bps": -10.22,
+    "t": -4.98,
+    "p": 6.337392368660488e-07
+   },
+   "holdout": {
+    "dates": 81,
+    "trades": 81,
+    "mean_bps": -0.99,
+    "lo_bps": -138.31,
+    "hi_bps": 136.33,
+    "t": -0.01,
+    "p": 0.9884628244033591
+   },
+   "edge_bps": 151.18,
+   "p": 0.007143235522653946,
+   "gate_n": true,
+   "gate_pos": true,
+   "gate_edge": true,
+   "gate_oos": false,
+   "gate_fdr": true,
+   "passed": false
+  },
+  {
+   "mult": 5.0,
+   "hold": 3,
+   "direction": "momentum",
+   "n_trades": 294,
+   "signal": {
+    "dates": 182,
+    "trades": 182,
+    "mean_bps": 95.67,
+    "lo_bps": 20.08,
+    "hi_bps": 171.27,
+    "t": 2.53,
+    "p": 0.011369483242243739
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -14.9,
+    "lo_bps": -20.1,
+    "hi_bps": -9.7,
+    "t": -5.73,
+    "p": 1.0094399760518513e-08
+   },
+   "holdout": {
+    "dates": 81,
+    "trades": 81,
+    "mean_bps": -94.97,
+    "lo_bps": -213.1,
+    "hi_bps": 23.16,
+    "t": -1.61,
+    "p": 0.10786852423450854
+   },
+   "edge_bps": 110.57,
+   "p": 0.011369483242243739,
+   "gate_n": true,
+   "gate_pos": true,
+   "gate_edge": true,
+   "gate_oos": false,
+   "gate_fdr": true,
+   "passed": false
+  },
+  {
+   "mult": 5.0,
+   "hold": 1,
+   "direction": "momentum",
+   "n_trades": 295,
+   "signal": {
+    "dates": 182,
+    "trades": 182,
+    "mean_bps": 39.03,
+    "lo_bps": -7.4,
+    "hi_bps": 85.46,
+    "t": 1.68,
+    "p": 0.0927178215423825
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -14.25,
+    "lo_bps": -16.81,
+    "hi_bps": -11.69,
+    "t": -11.15,
+    "p": 0.0
+   },
+   "holdout": {
+    "dates": 82,
+    "trades": 82,
+    "mean_bps": 0.66,
+    "lo_bps": -69.56,
+    "hi_bps": 70.88,
+    "t": 0.02,
+    "p": 0.9850233472308403
+   },
+   "edge_bps": 53.28,
+   "p": 0.0927178215423825,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": true,
+   "gate_oos": true,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 2.0,
+   "hold": 5,
+   "direction": "momentum",
+   "n_trades": 8004,
+   "signal": {
+    "dates": 1547,
+    "trades": 1547,
+    "mean_bps": -3.41,
+    "lo_bps": -25.19,
+    "hi_bps": 18.37,
+    "t": -0.31,
+    "p": 0.7542894815732231
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -17.23,
+    "lo_bps": -24.1,
+    "hi_bps": -10.36,
+    "t": -5.02,
+    "p": 5.245455363400708e-07
+   },
+   "holdout": {
+    "dates": 664,
+    "trades": 664,
+    "mean_bps": -42.98,
+    "lo_bps": -75.2,
+    "hi_bps": -10.77,
+    "t": -2.67,
+    "p": 0.00761459929053343
+   },
+   "edge_bps": 13.82,
+   "p": 0.7542894815732231,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": true,
+   "gate_oos": false,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 3.0,
+   "hold": 5,
+   "direction": "momentum",
+   "n_trades": 1871,
+   "signal": {
+    "dates": 757,
+    "trades": 757,
+    "mean_bps": -3.61,
+    "lo_bps": -45.38,
+    "hi_bps": 38.15,
+    "t": -0.17,
+    "p": 0.8626438295740426
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -17.13,
+    "lo_bps": -24.0,
+    "hi_bps": -10.26,
+    "t": -4.99,
+    "p": 6.125619882446642e-07
+   },
+   "holdout": {
+    "dates": 301,
+    "trades": 301,
+    "mean_bps": -85.1,
+    "lo_bps": -151.51,
+    "hi_bps": -18.69,
+    "t": -2.56,
+    "p": 0.01038468924286251
+   },
+   "edge_bps": 13.52,
+   "p": 0.8626438295740426,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": true,
+   "gate_oos": false,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 3.0,
+   "hold": 3,
+   "direction": "momentum",
+   "n_trades": 1872,
+   "signal": {
+    "dates": 757,
+    "trades": 757,
+    "mean_bps": -3.8,
+    "lo_bps": -37.68,
+    "hi_bps": 30.09,
+    "t": -0.22,
+    "p": 0.8227559473386423
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -14.92,
+    "lo_bps": -20.13,
+    "hi_bps": -9.71,
+    "t": -5.73,
+    "p": 9.997034311481912e-09
+   },
+   "holdout": {
+    "dates": 302,
+    "trades": 302,
+    "mean_bps": -125.49,
+    "lo_bps": -181.14,
+    "hi_bps": -69.85,
+    "t": -4.51,
+    "p": 6.4758162863221e-06
+   },
+   "edge_bps": 11.12,
+   "p": 0.8227559473386423,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": true,
+   "gate_oos": false,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 2.0,
+   "hold": 3,
+   "direction": "momentum",
+   "n_trades": 8016,
+   "signal": {
+    "dates": 1547,
+    "trades": 1547,
+    "mean_bps": -4.54,
+    "lo_bps": -22.0,
+    "hi_bps": 12.91,
+    "t": -0.52,
+    "p": 0.602823188244741
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -15.07,
+    "lo_bps": -20.27,
+    "hi_bps": -9.88,
+    "t": -5.8,
+    "p": 6.649061967678449e-09
+   },
+   "holdout": {
+    "dates": 666,
+    "trades": 666,
+    "mean_bps": -51.12,
+    "lo_bps": -77.81,
+    "hi_bps": -24.42,
+    "t": -3.83,
+    "p": 0.0001284464090283155
+   },
+   "edge_bps": 10.53,
+   "p": 0.602823188244741,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": true,
+   "gate_oos": false,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 3.0,
+   "hold": 1,
+   "direction": "momentum",
+   "n_trades": 1880,
+   "signal": {
+    "dates": 757,
+    "trades": 757,
+    "mean_bps": -5.3,
+    "lo_bps": -24.04,
+    "hi_bps": 13.44,
+    "t": -0.57,
+    "p": 0.5717010146077179
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -14.26,
+    "lo_bps": -16.8,
+    "hi_bps": -11.71,
+    "t": -11.19,
+    "p": 0.0
+   },
+   "holdout": {
+    "dates": 303,
+    "trades": 303,
+    "mean_bps": -35.21,
+    "lo_bps": -69.9,
+    "hi_bps": -0.52,
+    "t": -2.03,
+    "p": 0.04237913868062826
+   },
+   "edge_bps": 8.96,
+   "p": 0.5717010146077179,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": false,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 2.0,
+   "hold": 1,
+   "direction": "momentum",
+   "n_trades": 8040,
+   "signal": {
+    "dates": 1547,
+    "trades": 1547,
+    "mean_bps": -10.19,
+    "lo_bps": -19.81,
+    "hi_bps": -0.56,
+    "t": -2.12,
+    "p": 0.03425459092305605
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -14.25,
+    "lo_bps": -16.77,
+    "hi_bps": -11.73,
+    "t": -11.3,
+    "p": 0.0
+   },
+   "holdout": {
+    "dates": 668,
+    "trades": 668,
+    "mean_bps": -29.4,
+    "lo_bps": -44.39,
+    "hi_bps": -14.4,
+    "t": -3.92,
+    "p": 8.845148499347921e-05
+   },
+   "edge_bps": 4.06,
+   "p": 0.03425459092305605,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": false,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 2.0,
+   "hold": 1,
+   "direction": "reversal",
+   "n_trades": 8040,
+   "signal": {
+    "dates": 1547,
+    "trades": 1547,
+    "mean_bps": -9.81,
+    "lo_bps": -19.44,
+    "hi_bps": -0.19,
+    "t": -2.04,
+    "p": 0.04150424501270189
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -5.75,
+    "lo_bps": -8.27,
+    "hi_bps": -3.23,
+    "t": -4.56,
+    "p": 5.126020787837859e-06
+   },
+   "holdout": {
+    "dates": 668,
+    "trades": 668,
+    "mean_bps": 9.4,
+    "lo_bps": -5.6,
+    "hi_bps": 24.39,
+    "t": 1.25,
+    "p": 0.21016679177047415
+   },
+   "edge_bps": -4.06,
+   "p": 0.04150424501270189,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": true,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 3.0,
+   "hold": 1,
+   "direction": "reversal",
+   "n_trades": 1880,
+   "signal": {
+    "dates": 757,
+    "trades": 757,
+    "mean_bps": -14.7,
+    "lo_bps": -33.44,
+    "hi_bps": 4.04,
+    "t": -1.57,
+    "p": 0.1167004538549441
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -5.74,
+    "lo_bps": -8.29,
+    "hi_bps": -3.2,
+    "t": -4.51,
+    "p": 6.500919321084098e-06
+   },
+   "holdout": {
+    "dates": 303,
+    "trades": 303,
+    "mean_bps": 15.21,
+    "lo_bps": -19.48,
+    "hi_bps": 49.9,
+    "t": 0.88,
+    "p": 0.38056993010141804
+   },
+   "edge_bps": -8.96,
+   "p": 0.1167004538549441,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": true,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 2.0,
+   "hold": 3,
+   "direction": "reversal",
+   "n_trades": 8016,
+   "signal": {
+    "dates": 1547,
+    "trades": 1547,
+    "mean_bps": -15.46,
+    "lo_bps": -32.91,
+    "hi_bps": 2.0,
+    "t": -1.77,
+    "p": 0.07655391574471593
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -4.93,
+    "lo_bps": -10.12,
+    "hi_bps": 0.27,
+    "t": -1.9,
+    "p": 0.058016456201196664
+   },
+   "holdout": {
+    "dates": 666,
+    "trades": 666,
+    "mean_bps": 31.12,
+    "lo_bps": 4.42,
+    "hi_bps": 57.81,
+    "t": 2.33,
+    "p": 0.01974616103435789
+   },
+   "edge_bps": -10.53,
+   "p": 0.07655391574471593,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": true,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 3.0,
+   "hold": 3,
+   "direction": "reversal",
+   "n_trades": 1872,
+   "signal": {
+    "dates": 757,
+    "trades": 757,
+    "mean_bps": -16.2,
+    "lo_bps": -50.09,
+    "hi_bps": 17.68,
+    "t": -0.96,
+    "p": 0.33888719341137596
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -5.08,
+    "lo_bps": -10.29,
+    "hi_bps": 0.13,
+    "t": -1.95,
+    "p": 0.05106131842183492
+   },
+   "holdout": {
+    "dates": 302,
+    "trades": 302,
+    "mean_bps": 105.49,
+    "lo_bps": 49.85,
+    "hi_bps": 161.14,
+    "t": 3.79,
+    "p": 0.0001497830916159515
+   },
+   "edge_bps": -11.12,
+   "p": 0.33888719341137596,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": true,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 3.0,
+   "hold": 5,
+   "direction": "reversal",
+   "n_trades": 1871,
+   "signal": {
+    "dates": 757,
+    "trades": 757,
+    "mean_bps": -16.39,
+    "lo_bps": -58.15,
+    "hi_bps": 25.38,
+    "t": -0.78,
+    "p": 0.4325908824948188
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -2.87,
+    "lo_bps": -9.74,
+    "hi_bps": 4.0,
+    "t": -0.83,
+    "p": 0.40409763667811816
+   },
+   "holdout": {
+    "dates": 301,
+    "trades": 301,
+    "mean_bps": 65.1,
+    "lo_bps": -1.31,
+    "hi_bps": 131.51,
+    "t": 1.96,
+    "p": 0.04994524009751977
+   },
+   "edge_bps": -13.52,
+   "p": 0.4325908824948188,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": true,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 2.0,
+   "hold": 5,
+   "direction": "reversal",
+   "n_trades": 8004,
+   "signal": {
+    "dates": 1547,
+    "trades": 1547,
+    "mean_bps": -16.59,
+    "lo_bps": -38.37,
+    "hi_bps": 5.19,
+    "t": -1.52,
+    "p": 0.1276418786386122
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -2.77,
+    "lo_bps": -9.64,
+    "hi_bps": 4.1,
+    "t": -0.81,
+    "p": 0.42051806094434974
+   },
+   "holdout": {
+    "dates": 664,
+    "trades": 664,
+    "mean_bps": 22.98,
+    "lo_bps": -9.23,
+    "hi_bps": 55.2,
+    "t": 1.43,
+    "p": 0.15358755715148775
+   },
+   "edge_bps": -13.82,
+   "p": 0.1276418786386122,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": true,
+   "gate_fdr": false,
+   "passed": false
+  },
+  {
+   "mult": 5.0,
+   "hold": 1,
+   "direction": "reversal",
+   "n_trades": 295,
+   "signal": {
+    "dates": 182,
+    "trades": 182,
+    "mean_bps": -59.03,
+    "lo_bps": -105.46,
+    "hi_bps": -12.6,
+    "t": -2.54,
+    "p": 0.011000203265096875
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -5.75,
+    "lo_bps": -8.31,
+    "hi_bps": -3.19,
+    "t": -4.5,
+    "p": 6.829245572825826e-06
+   },
+   "holdout": {
+    "dates": 82,
+    "trades": 82,
+    "mean_bps": -20.66,
+    "lo_bps": -90.88,
+    "hi_bps": 49.56,
+    "t": -0.59,
+    "p": 0.556244874240434
+   },
+   "edge_bps": -53.28,
+   "p": 0.011000203265096875,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": false,
+   "gate_fdr": true,
+   "passed": false
+  },
+  {
+   "mult": 5.0,
+   "hold": 3,
+   "direction": "reversal",
+   "n_trades": 294,
+   "signal": {
+    "dates": 182,
+    "trades": 182,
+    "mean_bps": -115.67,
+    "lo_bps": -191.27,
+    "hi_bps": -40.08,
+    "t": -3.06,
+    "p": 0.002211410479992404
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -5.1,
+    "lo_bps": -10.3,
+    "hi_bps": 0.1,
+    "t": -1.96,
+    "p": 0.050029115047977246
+   },
+   "holdout": {
+    "dates": 81,
+    "trades": 81,
+    "mean_bps": 74.97,
+    "lo_bps": -43.16,
+    "hi_bps": 193.1,
+    "t": 1.27,
+    "p": 0.20435290304221843
+   },
+   "edge_bps": -110.57,
+   "p": 0.002211410479992404,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": true,
+   "gate_fdr": true,
+   "passed": false
+  },
+  {
+   "mult": 5.0,
+   "hold": 5,
+   "direction": "reversal",
+   "n_trades": 294,
+   "signal": {
+    "dates": 182,
+    "trades": 182,
+    "mean_bps": -154.1,
+    "lo_bps": -253.8,
+    "hi_bps": -54.4,
+    "t": -3.09,
+    "p": 0.00199288848201018
+   },
+   "baseline": {
+    "dates": 2100,
+    "trades": 2100,
+    "mean_bps": -2.92,
+    "lo_bps": -9.78,
+    "hi_bps": 3.94,
+    "t": -0.85,
+    "p": 0.3944233753001922
+   },
+   "holdout": {
+    "dates": 81,
+    "trades": 81,
+    "mean_bps": -19.01,
+    "lo_bps": -156.33,
+    "hi_bps": 118.31,
+    "t": -0.28,
+    "p": 0.7819071480750954
+   },
+   "edge_bps": -151.18,
+   "p": 0.00199288848201018,
+   "gate_n": true,
+   "gate_pos": false,
+   "gate_edge": false,
+   "gate_oos": false,
+   "gate_fdr": true,
+   "passed": false
+  }
+ ]
+}

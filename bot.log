@@ -14244,3 +14244,36 @@
 [2026-11-19 20:42:08 ET] [INFO] 4pm daily summary sent to Discord
 [2026-11-19 20:42:08 ET] [INFO] 4pm summary complete
 [2026-11-19 21:15:36 ET] [INFO] GitHub Actions: market closed — skipping scan (schedule ran early/late)
+[2026-11-20 15:48:37 ET] [INFO] GitHub Actions: market open — running scan
+[2026-11-20 15:48:37 ET] [INFO] Scanning 11 ticker(s): SPY, QQQ, AAPL, TSLA, NVDA, AMD, META, XLK, XLE, XLF, XBI
+[2026-11-20 15:48:38 ET] [INFO] VIX: 37.2
+[2026-11-20 15:48:38 ET] [INFO] VIX spike alert sent: 37.2
+[2026-11-20 15:48:38 ET] [INFO]   Checking SPY ...
+[2026-11-20 15:48:39 ET] [INFO]   SPY [iv_jump] filtered — Gate 1 FAIL — volume ratio 1.5x is below the 3x minimum
+[2026-11-20 15:48:40 ET] [INFO]   Checking QQQ ...
+[2026-11-20 15:48:41 ET] [INFO]   QQQ [iv_jump] filtered — Gate 1 FAIL — volume ratio 1.3x is below the 3x minimum
+[2026-11-20 15:48:42 ET] [INFO]   Checking AAPL ...
+[2026-11-20 15:48:43 ET] [INFO]   AAPL [iv_jump] filtered — Gate 1 FAIL — volume ratio 0.9x is below the 3x minimum
+[2026-11-20 15:48:44 ET] [INFO]   Checking TSLA ...
+[2026-11-20 15:48:45 ET] [INFO]   TSLA [iv_jump] filtered — Gate 1 FAIL — volume ratio 0.9x is below the 3x minimum
+[2026-11-20 15:48:46 ET] [INFO]   Checking NVDA ...
+[2026-11-20 15:48:46 ET] [INFO]   NVDA [volume_spike] filtered — Gate 1 FAIL — volume ratio 2.3x is below the 3x minimum
+[2026-11-20 15:48:46 ET] [INFO]   NVDA [iv_jump] filtered — Gate 1 FAIL — volume ratio 2.3x is below the 3x minimum
+[2026-11-20 15:48:48 ET] [INFO]   Checking AMD ...
+[2026-11-20 15:48:48 ET] [INFO]   AMD: no raw signals  (PC=1.42, IV=78.4%, Vol=681,456)
+[2026-11-20 15:48:48 ET] [INFO]   Checking META ...
+[2026-11-20 15:48:49 ET] [INFO]   META [iv_jump] filtered — Gate 1 FAIL — volume ratio 0.7x is below the 3x minimum
+[2026-11-20 15:48:50 ET] [INFO]   Checking XLK ...
+[2026-11-20 15:48:51 ET] [INFO]   XLK [volume_spike] filtered — Gate 1 FAIL — volume ratio 2.6x is below the 3x minimum
+[2026-11-20 15:48:51 ET] [INFO]   XLK [iv_jump] filtered — Gate 1 FAIL — volume ratio 2.6x is below the 3x minimum
+[2026-11-20 15:48:52 ET] [INFO]   Checking XLE ...
+[2026-11-20 15:48:53 ET] [INFO]   XLE: no raw signals  (PC=0.93, IV=41.5%, Vol=28,041)
+[2026-11-20 15:48:53 ET] [INFO]   Checking XLF ...
+[2026-11-20 15:48:53 ET] [INFO]   XLF [volume_spike] filtered — Gate 4 FAIL — confidence 59/100 is below the 70 threshold
+[2026-11-20 15:48:53 ET] [INFO]   XLF [iv_jump] filtered — Gate 4 FAIL — confidence 65/100 is below the 70 threshold
+[2026-11-20 15:48:53 ET] [INFO]   XLF [put_call_high] filtered — Gate 4 FAIL — confidence 59/100 is below the 70 threshold
+[2026-11-20 15:48:55 ET] [INFO]   Checking XBI ...
+[2026-11-20 15:48:55 ET] [INFO]   XBI [volume_spike] filtered — Gate 1 FAIL — volume ratio 2.1x is below the 3x minimum
+[2026-11-20 15:48:55 ET] [INFO]   XBI [iv_jump] filtered — Gate 1 FAIL — volume ratio 2.1x is below the 3x minimum
+[2026-11-20 15:48:55 ET] [INFO]   XBI [put_call_high] filtered — Gate 1 FAIL — volume ratio 2.1x is below the 3x minimum
+[2026-11-20 15:48:57 ET] [INFO] Scan complete — 0 alerts fired. 15 signal(s) filtered out. Silence = discipline.

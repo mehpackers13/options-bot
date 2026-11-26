@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T23:36:30-05:00",
+  "updated": "2026-11-25T22:46:24-05:00",
   "paper_only": true,
   "question": "Do straddles bought on >=3x stock-volume days make money, and beat random days?",
   "groups": {
@@ -130,77 +130,77 @@
       }
     },
     "near": {
-      "open": 13,
-      "closed": 51,
+      "open": 11,
+      "closed": 53,
       "skipped": 0,
       "late_exits": 1,
       "pnl_mid": {
-        "n": 50,
-        "dates": 16,
-        "mean": -0.005,
+        "n": 52,
+        "dates": 17,
+        "mean": -0.0076,
         "median": -0.1246,
-        "win_rate": 0.38,
-        "date_mean": -0.0103,
+        "win_rate": 0.385,
+        "date_mean": -0.014,
         "ci95": [
-          -0.1878,
-          0.1672
+          -0.1771,
+          0.1491
         ],
-        "t": -0.12
+        "t": -0.18
       },
       "pnl_mid_clean_quotes": {
-        "n": 29,
-        "dates": 13,
-        "mean": 0.0485,
-        "median": -0.107,
-        "win_rate": 0.414,
-        "date_mean": 0.0668,
+        "n": 30,
+        "dates": 14,
+        "mean": 0.0409,
+        "median": -0.1079,
+        "win_rate": 0.4,
+        "date_mean": 0.0492,
         "ci95": [
-          -0.1702,
-          0.3039
+          -0.144,
+          0.2424
         ],
-        "t": 0.61
+        "t": 0.55
       },
       "pnl_mid_no_event_day": {
-        "n": 50,
-        "dates": 16,
-        "mean": -0.005,
+        "n": 52,
+        "dates": 17,
+        "mean": -0.0076,
         "median": -0.1246,
-        "win_rate": 0.38,
-        "date_mean": -0.0103,
+        "win_rate": 0.385,
+        "date_mean": -0.014,
         "ci95": [
-          -0.1878,
-          0.1672
+          -0.1771,
+          0.1491
         ],
-        "t": -0.12
+        "t": -0.18
       },
       "pnl_cons": {
-        "n": 50,
-        "dates": 16,
-        "mean": -0.1855,
+        "n": 52,
+        "dates": 17,
+        "mean": -0.1869,
         "median": -0.217,
-        "win_rate": 0.26,
-        "date_mean": -0.1166,
+        "win_rate": 0.25,
+        "date_mean": -0.1226,
         "ci95": [
-          -0.3053,
-          0.0722
+          -0.2945,
+          0.0492
         ],
-        "t": -1.31
+        "t": -1.51
       },
       "pnl_floor": {
-        "n": 51,
-        "dates": 17,
-        "mean": -0.2937,
-        "median": -0.4054,
-        "win_rate": 0.294,
-        "date_mean": -0.2587,
+        "n": 53,
+        "dates": 18,
+        "mean": -0.2941,
+        "median": -0.3936,
+        "win_rate": 0.283,
+        "date_mean": -0.2612,
         "ci95": [
-          -0.5564,
-          0.0391
+          -0.5394,
+          0.0169
         ],
-        "t": -1.83
+        "t": -1.97
       },
-      "hit3_rate": 0.7255,
-      "avg_implied_move_pct": 7.5139,
+      "hit3_rate": 0.7358,
+      "avg_implied_move_pct": 7.4579,
       "pnl_mid_by_earnings": {
         "reaction_day": {
           "n": 5,
@@ -229,34 +229,34 @@
           "t": 2.02
         },
         "recent": {
-          "n": 10,
-          "dates": 6,
-          "mean": -0.0949,
-          "median": -0.1676,
-          "win_rate": 0.2,
-          "date_mean": -0.1187,
+          "n": 11,
+          "dates": 7,
+          "mean": -0.0831,
+          "median": -0.1622,
+          "win_rate": 0.273,
+          "date_mean": -0.0968,
           "ci95": [
-            -0.254,
-            0.0165
+            -0.2317,
+            0.038
           ],
-          "t": -2.14
+          "t": -1.69
         },
         "timing_unknown": {
           "n": 0,
           "dates": 0
         },
         "none": {
-          "n": 8,
-          "dates": 4,
-          "mean": 0.1746,
-          "median": -0.0132,
-          "win_rate": 0.5,
-          "date_mean": 0.0428,
+          "n": 9,
+          "dates": 5,
+          "mean": 0.1352,
+          "median": -0.0801,
+          "win_rate": 0.444,
+          "date_mean": -0.0018,
           "ci95": [
-            -0.3035,
-            0.3891
+            -0.3154,
+            0.3118
           ],
-          "t": 0.34
+          "t": -0.01
         },
         "unknown": {
           "n": 21,
@@ -275,76 +275,76 @@
     },
     "control": {
       "open": 12,
-      "closed": 63,
+      "closed": 66,
       "skipped": 0,
       "late_exits": 3,
       "pnl_mid": {
-        "n": 60,
-        "dates": 20,
-        "mean": 0.0484,
-        "median": -0.1288,
-        "win_rate": 0.35,
-        "date_mean": 0.0484,
-        "ci95": [
-          -0.1235,
-          0.2203
-        ],
-        "t": 0.59
-      },
-      "pnl_mid_clean_quotes": {
-        "n": 24,
-        "dates": 16,
-        "mean": -0.1258,
-        "median": -0.1752,
-        "win_rate": 0.208,
-        "date_mean": -0.1349,
-        "ci95": [
-          -0.2395,
-          -0.0303
-        ],
-        "t": -2.73
-      },
-      "pnl_mid_no_event_day": {
-        "n": 60,
-        "dates": 20,
-        "mean": 0.0484,
-        "median": -0.1288,
-        "win_rate": 0.35,
-        "date_mean": 0.0484,
-        "ci95": [
-          -0.1235,
-          0.2203
-        ],
-        "t": 0.59
-      },
-      "pnl_cons": {
-        "n": 60,
-        "dates": 20,
-        "mean": -0.1716,
-        "median": -0.2432,
-        "win_rate": 0.25,
-        "date_mean": -0.1716,
-        "ci95": [
-          -0.3495,
-          0.0063
-        ],
-        "t": -2.01
-      },
-      "pnl_floor": {
         "n": 63,
         "dates": 21,
-        "mean": -0.2451,
-        "median": -0.4333,
-        "win_rate": 0.286,
-        "date_mean": -0.2451,
+        "mean": 0.0405,
+        "median": -0.1283,
+        "win_rate": 0.333,
+        "date_mean": 0.0405,
         "ci95": [
-          -0.4586,
-          -0.0315
+          -0.1224,
+          0.2034
         ],
-        "t": -2.39
+        "t": 0.52
       },
-      "hit3_rate": 0.6825,
-      "avg_implied_move_pct": 5.0821,
+      "pnl_mid_clean_quotes": {
+        "n": 26,
+        "dates": 17,
+        "mean": -0.1281,
+        "median": -0.1752,
+        "win_rate": 0.192,
+        "date_mean": -0.1361,
+        "ci95": [
+          -0.2343,
+          -0.0379
+        ],
+        "t": -2.92
+      },
+      "pnl_mid_no_event_day": {
+        "n": 63,
+        "dates": 21,
+        "mean": 0.0405,
+        "median": -0.1283,
+        "win_rate": 0.333,
+        "date_mean": 0.0405,
+        "ci95": [
+          -0.1224,
+          0.2034
+        ],
+        "t": 0.52
+      },
+      "pnl_cons": {
+        "n": 63,
+        "dates": 21,
+        "mean": -0.1739,
+        "median": -0.2427,
+        "win_rate": 0.238,
+        "date_mean": -0.1739,
+        "ci95": [
+          -0.3423,
+          -0.0055
+        ],
+        "t": -2.15
+      },
+      "pnl_floor": {
+        "n": 66,
+        "dates": 22,
+        "mean": -0.2699,
+        "median": -0.4544,
+        "win_rate": 0.273,
+        "date_mean": -0.2699,
+        "ci95": [
+          -0.4775,
+          -0.0622
+        ],
+        "t": -2.7
+      },
+      "hit3_rate": 0.697,
+      "avg_implied_move_pct": 5.1916,
       "pnl_mid_by_earnings": {
         "reaction_day": {
           "n": 0,
@@ -381,30 +381,30 @@
           "dates": 0
         },
         "none": {
-          "n": 28,
-          "dates": 17,
-          "mean": 0.1064,
-          "median": -0.1233,
-          "win_rate": 0.357,
-          "date_mean": 0.2509,
+          "n": 30,
+          "dates": 18,
+          "mean": 0.0948,
+          "median": -0.1105,
+          "win_rate": 0.333,
+          "date_mean": 0.2332,
           "ci95": [
-            -0.0977,
-            0.5994
+            -0.1027,
+            0.569
           ],
-          "t": 1.52
+          "t": 1.46
         },
         "unknown": {
-          "n": 15,
-          "dates": 12,
-          "mean": 0.1249,
-          "median": -0.0361,
-          "win_rate": 0.4,
-          "date_mean": 0.1037,
+          "n": 16,
+          "dates": 13,
+          "mean": 0.1035,
+          "median": -0.0531,
+          "win_rate": 0.375,
+          "date_mean": 0.079,
           "ci95": [
-            -0.0996,
-            0.3069
+            -0.0755,
+            0.2334
           ],
-          "t": 1.11
+          "t": 1.1
         }
       }
     }
